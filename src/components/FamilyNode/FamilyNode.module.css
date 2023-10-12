@@ -1,0 +1,66 @@
+.root {
+  position: absolute;
+  display: flex;
+  padding: 10px;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  align-content: stretch;
+  /* width: 400px; */
+}
+
+.inner {
+  /* display: flex; */
+  flex: 1;
+  /* flex-basis: 200px; */
+  /* align-items: center;
+  justify-content: center; */
+  /* border: 2px solid rgba(0, 0, 0, .2); */
+  /* border-radius: 10px 0; */
+  font-weight: bold;
+  /* overflow: hidden; */
+  /* cursor: pointer; */
+  text-align: center;
+  padding: 10px;
+  min-width: 50px;
+  max-width: 200px;
+}
+
+.male {
+  background: #90CAF9;
+}
+
+.female {
+  background: #F48FB1;
+}
+
+.isRoot {
+  border-color: rgba(0, 0, 0, .4);
+}
+
+.isHover {
+  border-color: rgba(0, 0, 0, .8);
+}
+
+.id {
+  font-size: 10px;
+}
+
+.sub {
+  position: absolute;
+  top: 6px;
+  right: 14px;
+  width: 14px;
+  height: 10px;
+  border: 1px solid rgba(0, 0, 0, .2);
+  border-radius: 4px 0;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sub.male {
+  background: #fdaed8;
+}
+
+.sub.female {
+  background: #a4ecff;
+}
