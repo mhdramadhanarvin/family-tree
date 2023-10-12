@@ -11,7 +11,7 @@
 import type { Gender, Relation } from 'relatives-tree/lib/types';
 
 export const NODE_WIDTH = 100;
-export const NODE_HEIGHT = 100; 
+export const NODE_HEIGHT = 120; 
 
 interface Node {
   id: string;

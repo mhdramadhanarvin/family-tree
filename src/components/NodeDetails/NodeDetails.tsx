@@ -22,6 +22,7 @@ interface NodeDetailsProps {
   onSelect: (nodeId: string | undefined) => void;
   onHover: (nodeId: string) => void;
   onClear: () => void;
+  onAddFamily: (nodeId: string | undefined) => void;
 }
 
 export const NodeDetails = memo(function NodeDetails({
@@ -30,10 +31,9 @@ export const NodeDetails = memo(function NodeDetails({
   ...props
 }: NodeDetailsProps) {
   const closeHandler = useCallback(() => props.onSelect(undefined), [props]);
-
-  const addRelation = () => {
-    closeHandler();
-    console.log(node);
+  const addFamilyHandler = () => {
+    closeHandler()
+    return props.onAddFamily(node.id), [props]
   }; 
 
   return (
@@ -48,7 +48,7 @@ export const NodeDetails = memo(function NodeDetails({
       <Relations {...props} title="Anak" items={node.children} />
       <Relations {...props} title="Saudara" items={node.siblings} />
       <Relations {...props} title="Pasangan" items={node.spouses} />
-      <Button variant="contained" size="small" onClick={addRelation}>
+      <Button variant="contained" size="small" onClick={addFamilyHandler}>
         TAMBAH KELUARGA
       </Button>
     </section>

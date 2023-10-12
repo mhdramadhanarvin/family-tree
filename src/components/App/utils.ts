@@ -10,14 +10,14 @@ export function getNodeStyle({ left, top }: Readonly<ExtNode>): CSSProperties {
   };
 }
 
-export function getName(name: string) {
-  // return name + "=";
-  var words = name.split('-');
+// export function getName(name: string) {
+//   // return name + "=";
+//   var words = name.split('-');
 
-  for (var i = 0; i < words.length; i++) {
-    var word = words[i];
-    words[i] = word.charAt(0).toUpperCase() + word.slice(1);
-  }
+//   for (var i = 0; i < words.length; i++) {
+//     var word = words[i];
+//     words[i] = word.charAt(0).toUpperCase() + word.slice(1);
+//   }
 
-  return words.join(' ');
-}
+//   return words.join(' ');
+// }

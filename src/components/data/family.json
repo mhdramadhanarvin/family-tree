@@ -1,52 +1,54 @@
 [
   {
-    "id": "user1-user1-user1-user1",
-    "placeholder": true,
+    "id": "user1",
+    "name": "user1",
     "gender": "male",
     "parents": [
       {
         "id": "user5",
-        "type": "Kandung"
+        "type": "blood"
       },
       {
         "id": "user6",
-        "type": "Kandung"
+        "type": "blood"
       }
     ],
     "siblings": [
       {
         "id": "user4",
-        "type": "Kandung"
+        "type": "blood"
       }
     ],
     "spouses": [],
     "children": [
       {
         "id": "user3",
-        "type": "Kandung"
+        "type": "blood"
       }
     ]
   },
   {
     "id": "user2",
+    "name": "user2",
     "gender": "female",
     "parents": [],
     "siblings": [],
     "spouses": [
       {
         "id": "user5",
-        "type": "Menikah"
+        "type": "married"
       }
     ],
     "children": []
   },
   {
     "id": "user3",
+    "name": "user3",
     "gender": "male",
     "parents": [
       {
-        "id": "user1-user1-user1-user1",
-        "type": "Kandung"
+        "id": "user1",
+        "type": "blood"
       }
     ],
     "siblings": [],
@@ -55,21 +57,22 @@
   },
   {
     "id": "user4",
+    "name": "user4",
     "gender": "female",
     "parents": [
       {
         "id": "user5",
-        "type": "Kandung"
+        "type": "blood"
       },
       {
         "id": "user6",
-        "type": "Kandung"
+        "type": "blood"
       }
     ],
     "siblings": [
       {
-        "id": "user1-user1-user1-user1",
-        "type": "Kandung"
+        "id": "user1",
+        "type": "blood"
       }
     ],
     "spouses": [],
@@ -77,50 +80,70 @@
   },
   {
     "id": "user5",
+    "name": "Tuan Guru Syekh Abd. Wahab Rokan Al-Kholidi Naqsabandi",
     "gender": "male",
     "parents": [],
     "siblings": [],
     "spouses": [
       {
         "id": "user6",
-        "type": "Meninggal"
+        "type": "divorced"
       },
       {
         "id": "user2",
-        "type": "Menikah"
+        "type": "married"
       }
     ],
     "children": [
       {
-        "id": "user1-user1-user1-user1",
-        "type": "Kandung"
+        "id": "user1",
+        "type": "blood"
       },
       {
         "id": "user4",
-        "type": "Kandung"
+        "type": "blood"
       }
     ]
   },
   {
     "id": "user6",
+    "name": "user6",
     "gender": "female",
     "parents": [],
     "siblings": [],
     "spouses": [
       {
         "id": "user5",
-        "type": "Meninggal"
+        "type": "divorced"
       }
     ],
     "children": [
       {
-        "id": "user1-user1-user1-user1",
-        "type": "Kandung"
+        "id": "user1",
+        "type": "blood"
       },
       {
         "id": "user4",
-        "type": "Kandung"
+        "type": "blood"
       }
     ]
+  },
+  {
+    "id": "user7",
+    "name": "user7",
+    "gender": "female",
+    "parents": [
+      {
+        "id": "user5",
+        "type": "blood"
+      },
+      {
+        "id": "user2",
+        "type": "blood"
+      }
+    ],
+    "siblings": [],
+    "spouses": [],
+    "children": []
   }
 ]

@@ -60,6 +60,7 @@ export const AddFamily = () => {
   return (
     <Box component="form" className={css.root} noValidate autoComplete="off">
       <Stack spacing={2}>
+        <h2> Tambah Keluarga </h2>
         <TextField
           required
           id="outlined-required"

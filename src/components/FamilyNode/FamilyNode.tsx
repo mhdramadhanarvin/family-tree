@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import classNames from 'classnames';
 // import type { Node, ExtNode } from 'relatives-tree/lib/types';
 import css from './FamilyNode.module.css';
-import { getName } from '../App/utils';
+// import { getName } from '../App/utils';
 
 interface FamilyNodeProps {
   node: any;
@@ -29,7 +29,7 @@ export const FamilyNode = React.memo(
           )}
           onClick={clickHandler}
         >
-          <div className={css.id}>{getName(node.name)}</div>
+          <div className={css.id}>{node.name}</div>
         </div>
         {node.hasSubTree && (
           <div
