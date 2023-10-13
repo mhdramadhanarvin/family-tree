@@ -48,7 +48,12 @@ export default React.memo(function App() {
   const selected = useMemo(
     () => nodes.find((item) => item.id === selectId),
     [nodes, selectId]
-  );
+  ); 
+
+  const seeDetailNode = (selectId: string) => {
+    setSelectId(selectId)
+    setAddFamilyId(undefined)
+  }
 
   return (
     <div className={css.root}>
@@ -72,7 +77,7 @@ export default React.memo(function App() {
                 node={node}
                 isRoot={node.id === rootId}
                 isHover={node.id === hoverId}
-                onClick={setSelectId}
+                onClick={seeDetailNode}
                 onSubClick={setRootId}
                 style={getNodeStyle(node)}
               />
@@ -95,7 +100,7 @@ export default React.memo(function App() {
           onAddFamily={setAddFamilyId}
         />
       )}
-      {addFamilyId && <AddFamily />}
+      {addFamilyId && <AddFamily onAdd={setAddFamilyId} />}
     </div>
   );
 });

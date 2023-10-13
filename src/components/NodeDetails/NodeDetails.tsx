@@ -32,8 +32,8 @@ export const NodeDetails = memo(function NodeDetails({
 }: NodeDetailsProps) {
   const closeHandler = useCallback(() => props.onSelect(undefined), [props]);
   const addFamilyHandler = () => {
-    closeHandler()
-    return props.onAddFamily(node.id), [props]
+    closeHandler() 
+    return props.onAddFamily(node.id)
   }; 
 
   return (

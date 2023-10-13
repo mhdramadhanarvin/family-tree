@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Radio from "@mui/material/Radio";
@@ -8,7 +8,8 @@ import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 import css from "./AddFamily.module.css";
 import Stack from "@mui/material/Stack";
-import Button from '@mui/material/Button';
+import Button from "@mui/material/Button";
+import { Hidden, Input } from "@mui/material";
 
 export interface UserData {
   parent: string;
@@ -16,7 +17,16 @@ export interface UserData {
   type: string;
 }
 
-export const AddFamily = () => {
+interface AddFamilyProps {
+  // node: Readonly<Node>;
+  // className?: string;
+  // onSelect: (nodeId: string | undefined) => void;
+  // onHover: (nodeId: string) => void;
+  // onClear: () => void;
+  onAdd: (nodeId: string | undefined) => void;
+}
+
+export const AddFamily = ({ ...props }: AddFamilyProps) => {
   // const [formData, setFormData] = React.useState<UserData>({
   //   parent: "",
   //   name: "",
@@ -37,6 +47,7 @@ export const AddFamily = () => {
   // const getType = (): void => {};
 
   const [selectedValues, setSelectedValues] = React.useState({
+    parent: props.onAdd,
     name: "",
     gender: "male",
     relationType: "spouse",
@@ -49,6 +60,8 @@ export const AddFamily = () => {
     }));
   };
 
+  const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
+  
   const handleSubmit = () => {
     // Access selected values for group1 and group2 in selectedValues object
     // const { name, gender, relationType } = selectedValues;
@@ -60,7 +73,10 @@ export const AddFamily = () => {
   return (
     <Box component="form" className={css.root} noValidate autoComplete="off">
       <Stack spacing={2}>
-        <h2> Tambah Keluarga </h2>
+        <header className={css.header}>
+          <h2 className={css.title}> Tambah Keluarga </h2>
+          <button className={css.close} onClick={closeHandler}>&#10005;</button>
+        </header>
         <TextField
           required
           id="outlined-required"
