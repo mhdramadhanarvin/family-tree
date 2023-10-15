@@ -29,12 +29,9 @@ export const Relations = memo(function Relations({
     [onHover]
   );
   const clearHandler = useCallback(() => onClear(), [onClear]);
-  const [source] = useState(DEFAULT_SOURCE);
-  const [nodes] = useState(SOURCES[source]);
 
   const getNameById = (id: string | undefined): any => {
-    const node = allNode.filter((node: any) => node.id === id)[0];
-    // console.log(items)
+    const node = allNode.filter((node: any) => node.id === id)[0]; 
     return node.name;
   };
 

@@ -38,9 +38,7 @@ export default React.memo(function App() {
 
   const [selectId, setSelectId] = useState<string>();
   const [hoverId, setHoverId] = useState<string>();
-  const [addFamilyId, setAddFamilyId] = useState<string>();
-
-  console.log("Before useEffect: " , nodes, firstNodeId, rootId);
+  const [addFamilyId, setAddFamilyId] = useState<string>(); 
 
   useEffect(() => {
     FamilyDataService.getAll().then((result: Node[]) => {
@@ -48,9 +46,7 @@ export default React.memo(function App() {
       setRootId(response[0].id)
       setNodes(response); 
     });
-  }, [nodes, firstNodeId, rootId]);
-
-  console.log("After useEffect: " , nodes, firstNodeId, rootId);
+  }, [nodes, firstNodeId, rootId]); 
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),

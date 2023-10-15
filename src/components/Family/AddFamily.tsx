@@ -29,8 +29,7 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
   // }
 
   // function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  //   event.preventDefault();
-  //   console.log(formData);
+  //   event.preventDefault(); 
   //   // onSubmit(formData);
   // }
 
@@ -66,8 +65,7 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
     // event.preventDefault();
     // if ( selectedValues.relationType === "children") {
 
-    // }
-    // console.log(selectedValues);
+    // } 
     // FamilyDataService.create({
     //   id: "123",
     //   name: selectedValues.name,
@@ -93,8 +91,7 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
     //   });
     // const familyDataService = FamilyDataService
     // FamilyDataService.getAll().then((result: any) => {
-    //   const finalRes = FamilyDataService.mappingData(result)
-    //   // console.log(finalRes);
+    //   const finalRes = FamilyDataService.mappingData(result) 
     // });
   };
 
