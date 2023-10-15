@@ -1,6 +1,6 @@
 import { child, get, ref, set } from "firebase/database";
 import { database } from "../config/firebase";
-import FamilyData, { Node } from "../types/family.type"
+import { Node } from "../types/family.type"
 import { Gender } from "relatives-tree/lib/types";
 
 const db = ref(database, '/family');
@@ -16,7 +16,7 @@ class FamilyDataService {
     }
   }
 
-  create(familyData: FamilyData) {
+  create(familyData: Node) {
     return set(db, familyData);
   }
 
@@ -30,6 +30,9 @@ class FamilyDataService {
         parents: [],
         siblings: [],
         spouses: [],
+        birthday: "",
+        address: "",
+        job: ""
       };
 
       const mappedData = {

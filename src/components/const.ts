@@ -10,20 +10,21 @@
 // import familyData from './data/family.json'
 import type { Gender, Relation } from 'relatives-tree/lib/types';
 import FamilyDataService from '../services/FamilyDataService';
+import { Node } from '../types/family.type';
 
 export const NODE_WIDTH = 100;
 export const NODE_HEIGHT = 120;
 
-interface Node {
-  id: string;
-  name?: string;
-  gender: Gender;
-  parents: readonly Relation[];
-  children: readonly Relation[];
-  siblings: readonly Relation[];
-  spouses: readonly Relation[];
-  placeholder?: boolean;
-};
+// interface Node {
+//   id: string;
+//   name?: string;
+//   gender: Gender;
+//   parents: readonly Relation[];
+//   children: readonly Relation[];
+//   siblings: readonly Relation[];
+//   spouses: readonly Relation[];
+//   placeholder?: boolean;
+// };
 
 export const SOURCES = {
   // 'average-tree.json': averageTree,

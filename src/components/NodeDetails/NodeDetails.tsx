@@ -1,20 +1,9 @@
-import React, { memo, useCallback } from "react";
+import { memo, useCallback } from "react";
 import classNames from "classnames";
-import type { Gender, Relation } from "relatives-tree/lib/types";
 import { Relations } from "./Relations";
 import css from "./NodeDetails.module.css";
 import Button from "@mui/material/Button";
- 
-interface Node {
-  id: string;
-  name?: string;
-  gender: Gender;
-  parents: readonly Relation[];
-  children: readonly Relation[];
-  siblings: readonly Relation[];
-  spouses: readonly Relation[];
-  placeholder?: boolean;
-};
+import { Node } from "../../types/family.type";
 
 interface NodeDetailsProps {
   node: Readonly<Node>;
@@ -34,9 +23,9 @@ export const NodeDetails = memo(function NodeDetails({
 }: NodeDetailsProps) {
   const closeHandler = useCallback(() => props.onSelect(undefined), [props]);
   const addFamilyHandler = () => {
-    closeHandler()  
-    return props.onAddFamily(node.id)
-  }; 
+    closeHandler();
+    return props.onAddFamily(node.id);
+  };
 
   return (
     <section className={classNames(css.root, className)}>
@@ -46,10 +35,35 @@ export const NodeDetails = memo(function NodeDetails({
           &#10005;
         </button>
       </header>
-      <Relations {...props} allNode={allNode} title="OrangTua" items={node.parents} />
-      <Relations {...props} allNode={allNode} title="Anak" items={node.children} />
-      <Relations {...props} allNode={allNode} title="Saudara" items={node.siblings} />
-      <Relations {...props} allNode={allNode} title="Pasangan" items={node.spouses} />
+      {node.birthday && (
+        <h4 className={css.header}>Tanggal Lahir : {node.birthday}</h4>
+      )}
+      {node.address && <h4 className={css.header}>Alamat : {node.address}</h4>}
+      {node.job && <h4 className={css.header}>Pekerjaan : {node.job}</h4>}
+      <Relations
+        {...props}
+        allNode={allNode}
+        title="OrangTua"
+        items={node.parents}
+      />
+      <Relations
+        {...props}
+        allNode={allNode}
+        title="Anak"
+        items={node.children}
+      />
+      <Relations
+        {...props}
+        allNode={allNode}
+        title="Saudara"
+        items={node.siblings}
+      />
+      <Relations
+        {...props}
+        allNode={allNode}
+        title="Pasangan"
+        items={node.spouses}
+      />
       <Button variant="contained" size="small" onClick={addFamilyHandler}>
         TAMBAH KELUARGA
       </Button>

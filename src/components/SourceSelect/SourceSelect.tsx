@@ -1,17 +1,7 @@
 import React, { memo, useCallback, ChangeEvent } from 'react';
 import type { Gender, Relation } from 'relatives-tree/lib/types';
 import { URL_LABEL } from '../const';
-
-interface Node {
-  id: string;
-  name?: string;
-  gender: Gender;
-  parents: readonly Relation[];
-  children: readonly Relation[];
-  siblings: readonly Relation[];
-  spouses: readonly Relation[];
-  placeholder?: boolean;
-};
+import { Node } from '../../types/family.type';
 
 interface SourceSelectProps {
   value: string;

@@ -30,7 +30,7 @@ export const Relations = memo(function Relations({
   );
   const clearHandler = useCallback(() => onClear(), [onClear]);
 
-  const getNameById = (id: string | undefined): any => {
+  const getNameById = (id: string | undefined): string => {
     const node = allNode.filter((node: any) => node.id === id)[0]; 
     return node.name;
   };

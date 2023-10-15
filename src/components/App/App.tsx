@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import type { Gender, Relation } from "relatives-tree/lib/types";
 import app from "../../..//package.json";
 import ReactFamilyTree from "react-family-tree";
 // import { SourceSelect } from '../SourceSelect/SourceSelect';
@@ -12,17 +11,18 @@ import { AddFamily } from "../Family/AddFamily";
 
 import css from "./App.module.css";
 import FamilyDataService from "../../services/FamilyDataService";
+import { Node } from "../../types/family.type";
 
-interface Node {
-  id: string;
-  name?: string;
-  gender: Gender;
-  parents: readonly Relation[];
-  children: readonly Relation[];
-  siblings: readonly Relation[];
-  spouses: readonly Relation[];
-  placeholder?: boolean;
-}
+// interface Node {
+//   id: string;
+//   name?: string;
+//   gender: Gender;
+//   parents: readonly Relation[];
+//   children: readonly Relation[];
+//   siblings: readonly Relation[];
+//   spouses: readonly Relation[]; 
+//   placeholder?: boolean;
+// }
 
 interface ExtNode extends Node {
   readonly top: number;
@@ -46,7 +46,7 @@ export default React.memo(function App() {
       setRootId(response[0].id)
       setNodes(response); 
     });
-  }, [nodes, firstNodeId, rootId]); 
+  }, [nodes, firstNodeId, rootId]);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),
