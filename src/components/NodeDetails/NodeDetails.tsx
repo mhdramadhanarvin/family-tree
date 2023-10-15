@@ -18,6 +18,7 @@ interface Node {
 
 interface NodeDetailsProps {
   node: Readonly<Node>;
+  allNode: any;
   className?: string;
   onSelect: (nodeId: string | undefined) => void;
   onHover: (nodeId: string) => void;
@@ -27,12 +28,13 @@ interface NodeDetailsProps {
 
 export const NodeDetails = memo(function NodeDetails({
   node,
+  allNode,
   className,
   ...props
 }: NodeDetailsProps) {
   const closeHandler = useCallback(() => props.onSelect(undefined), [props]);
   const addFamilyHandler = () => {
-    closeHandler() 
+    closeHandler()  
     return props.onAddFamily(node.id)
   }; 
 
@@ -44,10 +46,10 @@ export const NodeDetails = memo(function NodeDetails({
           &#10005;
         </button>
       </header>
-      <Relations {...props} title="OrangTua" items={node.parents} />
-      <Relations {...props} title="Anak" items={node.children} />
-      <Relations {...props} title="Saudara" items={node.siblings} />
-      <Relations {...props} title="Pasangan" items={node.spouses} />
+      <Relations {...props} allNode={allNode} title="OrangTua" items={node.parents} />
+      <Relations {...props} allNode={allNode} title="Anak" items={node.children} />
+      <Relations {...props} allNode={allNode} title="Saudara" items={node.siblings} />
+      <Relations {...props} allNode={allNode} title="Pasangan" items={node.spouses} />
       <Button variant="contained" size="small" onClick={addFamilyHandler}>
         TAMBAH KELUARGA
       </Button>

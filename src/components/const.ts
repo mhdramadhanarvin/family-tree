@@ -9,9 +9,10 @@
 // import testTreeN2 from 'relatives-tree/samples/test-tree-n2.json';
 // import familyData from './data/family.json'
 import type { Gender, Relation } from 'relatives-tree/lib/types';
+import FamilyDataService from '../services/FamilyDataService';
 
 export const NODE_WIDTH = 100;
-export const NODE_HEIGHT = 120; 
+export const NODE_HEIGHT = 120;
 
 interface Node {
   id: string;

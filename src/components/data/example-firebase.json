@@ -1,0 +1,911 @@
+{
+  "family": [
+    {
+      "gender": "male",
+      "id": "user1",
+      "name": "Tuan Guru Syekh Abd. Wahab Rokan Al-Kholidi Naqsabandi",
+      "parents": [],
+      "children": [
+        {
+          "id": "user2",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user13",
+          "type": "blood"
+        },
+        {
+          "id": "user14",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user1.1",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "gender": "female",
+      "id": "user1.1",
+      "name": "(Tidak Diketahui)",
+      "parents": [],
+      "children": [
+        {
+          "id": "user2",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user13",
+          "type": "blood"
+        },
+        {
+          "id": "user14",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user1",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user2",
+      "gender": "female",
+      "name": "Mariah binti Datuk Jaya Perkasa Abd. Jalil (Kubu)",
+      "parents": [
+        {
+          "id": "user1",
+          "type": "blood"
+        },
+        {
+          "id": "user1.1",
+          "type": "blood"
+        }
+      ],
+      "children": [
+        {
+          "id": "user3",
+          "type": "blood"
+        },
+        {
+          "id": "user4",
+          "type": "blood"
+        }
+      ],
+      "siblings": [
+        {
+          "id": "user14",
+          "type": "blood"
+        },
+        {
+          "id": "user13",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        }
+      ],
+      "spouses": [
+        {
+          "id": "user2.2",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user2.2",
+      "gender": "male",
+      "name": "(Tidak Diketahui)",
+      "parents": [],
+      "children": [
+        {
+          "id": "user3",
+          "type": "blood"
+        },
+        {
+          "id": "user4",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user2",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user3",
+      "gender": "male",
+      "name": "Abdullah",
+      "parents": [
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "children": [
+        {
+          "id": "user5",
+          "type": "blood"
+        },
+        {
+          "id": "user6",
+          "type": "blood"
+        }
+      ],
+      "siblings": [
+        {
+          "id": "user4",
+          "type": "blood"
+        }
+      ],
+      "spouses": [
+        {
+          "id": "user3.1",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user3.1",
+      "gender": "female",
+      "name": "(Tidak Diketahui)",
+      "parents": [],
+      "children": [
+        {
+          "id": "user5",
+          "type": "blood"
+        },
+        {
+          "id": "user6",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user3",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user4",
+      "gender": "female",
+      "name": "Bulan, Tanah Putih",
+      "parents": [
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user3",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user5",
+      "gender": "female",
+      "name": "Arba'iyah",
+      "parents": [
+        {
+          "id": "user3",
+          "type": "blood"
+        },
+        {
+          "id": "user3.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user6",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user6",
+      "gender": "male",
+      "name": "Muh. Ridwan",
+      "parents": [
+        {
+          "id": "user3",
+          "type": "blood"
+        },
+        {
+          "id": "user3.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user5",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user7",
+      "gender": "female",
+      "name": "Khadijah binti Abdullah (Kualuh)",
+      "parents": [
+        {
+          "id": "user1",
+          "type": "blood"
+        },
+        {
+          "id": "user1.1",
+          "type": "blood"
+        }
+      ],
+      "children": [
+        {
+          "id": "user8",
+          "type": "blood"
+        },
+        {
+          "id": "user9",
+          "type": "blood"
+        },
+        {
+          "id": "user10",
+          "type": "blood"
+        }
+      ],
+      "siblings": [
+        {
+          "id": "user14",
+          "type": "blood"
+        },
+        {
+          "id": "user13",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "spouses": [
+        {
+          "id": "user7.1",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user7.1",
+      "gender": "male",
+      "name": "(Tidak Diketahui)",
+      "parents": [],
+      "children": [
+        {
+          "id": "user8",
+          "type": "blood"
+        },
+        {
+          "id": "user9",
+          "type": "blood"
+        },
+        {
+          "id": "user10",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user7",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user8",
+      "gender": "male",
+      "name": "Ahmad",
+      "parents": [
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user7.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user8.1",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user8.1",
+      "gender": "female",
+      "name": "(Tidak Diketahui)",
+      "parents": [],
+      "children": [],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user8",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user9",
+      "gender": "male",
+      "name": "H. Yahya Afandi",
+      "parents": [
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user7.1",
+          "type": "blood"
+        }
+      ],
+      "children": [
+        {
+          "id": "user9.1.1",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.2",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.3",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.4",
+          "type": "blood"
+        }
+      ],
+      "siblings": [
+        {
+          "id": "user8",
+          "type": "blood"
+        }
+      ],
+      "spouses": [
+        {
+          "id": "user9.1",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user9.1",
+      "gender": "female",
+      "name": "Sumah, Kubu",
+      "parents": [],
+      "children": [
+        {
+          "id": "user9.1.1",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.2",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.3",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.4",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user9",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user9.1.1",
+      "gender": "male",
+      "name": "Qasim",
+      "parents": [
+        {
+          "id": "user9",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user9.1.2",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.3",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.4",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user9.1.2",
+      "gender": "male",
+      "name": "H. Fadhil",
+      "parents": [
+        {
+          "id": "user9",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user9.1.1",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.3",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.4",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user9.1.3",
+      "gender": "female",
+      "name": "Fathamah",
+      "parents": [
+        {
+          "id": "user9",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user9.1.1",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.2",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.4",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user9.1.4",
+      "gender": "female",
+      "name": "Radhiah",
+      "parents": [
+        {
+          "id": "user9",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user9.1.1",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.2",
+          "type": "blood"
+        },
+        {
+          "id": "user9.1.3",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user10",
+      "gender": "male",
+      "name": "H. Bakri",
+      "parents": [
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user7.1",
+          "type": "blood"
+        }
+      ],
+      "children": [
+        {
+          "id": "user15",
+          "type": "blood"
+        },
+        {
+          "id": "user18",
+          "type": "blood"
+        },
+        {
+          "id": "user19",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user10.1",
+          "type": "married"
+        },
+        {
+          "id": "user16",
+          "type": "married"
+        },
+        {
+          "id": "user17",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user10.1",
+      "gender": "female",
+      "name": "Aminah aminah, binti H. Abd. Wahab Tembusai",
+      "parents": [],
+      "children": [
+        {
+          "id": "user15",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user10",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user11",
+      "gender": "female",
+      "name": "Halimah binti Datuk Jaya Perkasa Muhammad Dali (Kubu)",
+      "parents": [
+        {
+          "id": "user1",
+          "type": "blood"
+        },
+        {
+          "id": "user1.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user14",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user12",
+      "gender": "female",
+      "name": "Sa'diah binti H. A. Manan (Kubu)",
+      "parents": [
+        {
+          "id": "user1",
+          "type": "blood"
+        },
+        {
+          "id": "user1.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user14",
+          "type": "blood"
+        },
+        {
+          "id": "user13",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user13",
+      "gender": "female",
+      "name": "Zubaidah binti Nusul (Kubu).",
+      "parents": [
+        {
+          "id": "user1",
+          "type": "blood"
+        },
+        {
+          "id": "user1.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user14",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user14",
+      "gender": "female",
+      "name": "Zahrah (Tembusai)",
+      "parents": [
+        {
+          "id": "user1",
+          "type": "blood"
+        },
+        {
+          "id": "user1.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [
+        {
+          "id": "user13",
+          "type": "blood"
+        },
+        {
+          "id": "user12",
+          "type": "blood"
+        },
+        {
+          "id": "user11",
+          "type": "blood"
+        },
+        {
+          "id": "user7",
+          "type": "blood"
+        },
+        {
+          "id": "user2",
+          "type": "blood"
+        }
+      ],
+      "spouses": []
+    },
+    {
+      "id": "user15",
+      "gender": "male",
+      "name": "Hisyam",
+      "parents": [
+        {
+          "id": "user10",
+          "type": "blood"
+        },
+        {
+          "id": "user10.1",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [],
+      "spouses": []
+    },
+    {
+      "id": "user16",
+      "gender": "female",
+      "name": "Naromah",
+      "parents": [],
+      "children": [
+        {
+          "id": "user18",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user10",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user17",
+      "gender": "female",
+      "name": "Baesah binti Imam Joman (Tanah Putih)",
+      "parents": [],
+      "children": [
+        {
+          "id": "user19",
+          "type": "blood"
+        }
+      ],
+      "siblings": [],
+      "spouses": [
+        {
+          "id": "user10",
+          "type": "married"
+        }
+      ]
+    },
+    {
+      "id": "user18",
+      "gender": "male",
+      "name": "Muhammad Azhari ",
+      "parents": [
+        {
+          "id": "user10",
+          "type": "blood"
+        },
+        {
+          "id": "user16",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [],
+      "spouses": []
+    },
+    {
+      "id": "user19",
+      "gender": "male",
+      "name": "Mustafa",
+      "parents": [
+        {
+          "id": "user10",
+          "type": "blood"
+        },
+        {
+          "id": "user17",
+          "type": "blood"
+        }
+      ],
+      "children": [],
+      "siblings": [],
+      "spouses": []
+    }
+  ]
+}

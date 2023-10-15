@@ -1,8 +1,6 @@
 import React, { useCallback } from 'react';
-import classNames from 'classnames';
-// import type { Node, ExtNode } from 'relatives-tree/lib/types';
-import css from './FamilyNode.module.css';
-// import { getName } from '../App/utils';
+import classNames from 'classnames'; 
+import css from './FamilyNode.module.css'; 
 
 interface FamilyNodeProps {
   node: any;
@@ -16,7 +14,7 @@ interface FamilyNodeProps {
 export const FamilyNode = React.memo(
   function FamilyNode({ node, isRoot, isHover, onClick, onSubClick, style }: FamilyNodeProps) {
     const clickHandler = useCallback(() => onClick(node.id), [node.id, onClick]);
-    const clickSubHandler = useCallback(() => onSubClick(node.id), [node.id, onSubClick]);
+    const clickSubHandler = useCallback(() => onSubClick(node.id), [node.id, onSubClick]);  
 
     return (
       <div className={css.root} style={style}>

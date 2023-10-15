@@ -1,6 +1,6 @@
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import type { Gender, Relation } from "relatives-tree/lib/types";
-import treePackage from "relatives-tree/package.json";
+import app from "../../..//package.json";
 import ReactFamilyTree from "react-family-tree";
 // import { SourceSelect } from '../SourceSelect/SourceSelect';
 import { PinchZoomPan } from "../PinchZoomPan/PinchZoomPan";
@@ -8,9 +8,10 @@ import { FamilyNode } from "../FamilyNode/FamilyNode";
 import { NodeDetails } from "../NodeDetails/NodeDetails";
 import { NODE_WIDTH, NODE_HEIGHT, SOURCES, DEFAULT_SOURCE } from "../const";
 import { getNodeStyle } from "./utils";
-import { AddFamily } from '../Family/AddFamily'
+import { AddFamily } from "../Family/AddFamily";
 
 import css from "./App.module.css";
+import FamilyDataService from "../../services/FamilyDataService";
 
 interface Node {
   id: string;
@@ -31,14 +32,25 @@ interface ExtNode extends Node {
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
-  const [nodes] = useState(SOURCES[source]);
-  const firstNodeId = useMemo(() => nodes[0].id, [nodes]);
+  const [nodes, setNodes] = useState(SOURCES[source]);
+  const firstNodeId = useMemo(() => nodes[0].id, [nodes]); 
   const [rootId, setRootId] = useState(firstNodeId);
 
   const [selectId, setSelectId] = useState<string>();
   const [hoverId, setHoverId] = useState<string>();
   const [addFamilyId, setAddFamilyId] = useState<string>();
-  // const [addRelationId, setAddRelationId] = useState<string>();
+
+  console.log("Before useEffect: " , nodes, firstNodeId, rootId);
+
+  useEffect(() => {
+    FamilyDataService.getAll().then((result: Node[]) => {
+      const response = FamilyDataService.mappingData(result);
+      setRootId(response[0].id)
+      setNodes(response); 
+    });
+  }, [nodes, firstNodeId, rootId]);
+
+  console.log("After useEffect: " , nodes, firstNodeId, rootId);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),
@@ -46,28 +58,28 @@ export default React.memo(function App() {
   );
 
   const selected = useMemo(
-    () => nodes.find((item) => item.id === selectId),
+    () => (nodes ? nodes.find((item) => item.id === selectId) : null),
     [nodes, selectId]
-  ); 
+  );
 
   const seeDetailNode = (selectId: string) => {
-    setSelectId(selectId)
-    setAddFamilyId(undefined)
-  }
+    setSelectId(selectId);
+    setAddFamilyId(undefined);
+  }; 
 
   return (
     <div className={css.root}>
       <header className={css.header}>
         <h1 className={css.title}>
           FamilyTree
-          <span className={css.version}>core: {treePackage.version}</span>
+          <span className={css.version}>version: {app.version}</span>
         </h1>
       </header>
-      {nodes.length > 0 && (
+      {nodes !== null && nodes.length > 0 && (
         <PinchZoomPan min={0.5} max={2.0} captureWheel className={css.wrapper}>
           <ReactFamilyTree
-            nodes={nodes}
-            rootId={rootId}
+            nodes={nodes as Readonly<Node[]>}
+            rootId={rootId || ""}
             width={NODE_WIDTH}
             height={NODE_HEIGHT}
             className={css.tree}
@@ -93,6 +105,7 @@ export default React.memo(function App() {
       {selected && (
         <NodeDetails
           node={selected}
+          allNode={nodes}
           className={css.details}
           onSelect={setSelectId}
           onHover={setHoverId}
@@ -100,7 +113,7 @@ export default React.memo(function App() {
           onAddFamily={setAddFamilyId}
         />
       )}
-      {addFamilyId && <AddFamily onAdd={setAddFamilyId} />}
+      {addFamilyId && <AddFamily onAdd={addFamilyId} />}
     </div>
   );
 });

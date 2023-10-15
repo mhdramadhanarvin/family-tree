@@ -9,21 +9,11 @@ import FormLabel from "@mui/material/FormLabel";
 import css from "./AddFamily.module.css";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { Hidden, Input } from "@mui/material";
-
-export interface UserData {
-  parent: string;
-  name: string;
-  type: string;
-}
+import FamilyDataService from "../../services/FamilyDataService";
+import { Gender, RelType } from "relatives-tree/lib/types";
 
 interface AddFamilyProps {
-  // node: Readonly<Node>;
-  // className?: string;
-  // onSelect: (nodeId: string | undefined) => void;
-  // onHover: (nodeId: string) => void;
-  // onClear: () => void;
-  onAdd: (nodeId: string | undefined) => void;
+  onAdd: string;
 }
 
 export const AddFamily = ({ ...props }: AddFamilyProps) => {
@@ -60,22 +50,63 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
     }));
   };
 
-  const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
-  
-  const handleSubmit = () => {
+  // const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
+  const closeHandler = () => {};
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    let parents,
+      children,
+      siblings,
+      spouse = [];
     // Access selected values for group1 and group2 in selectedValues object
     // const { name, gender, relationType } = selectedValues;
 
     // Perform your submit logic here
-    console.log(selectedValues);
+    // event.preventDefault();
+    // if ( selectedValues.relationType === "children") {
+
+    // }
+    // console.log(selectedValues);
+    // FamilyDataService.create({
+    //   id: "123",
+    //   name: selectedValues.name,
+    //   gender: selectedValues.gender,
+    //   parents: [
+    //     {
+    //       id: selectedValues.parent,
+    //       type: "blood",
+    //     },
+    //   ],
+    //   children: [],
+    //   siblings: [],
+    //   spouses: [],
+    // })
+    //   .then(() => {
+    //     console.log("Created new item successfully!");
+    //     // this.setState({
+    //     //   submitted: true,
+    //     // });
+    //   })
+    //   .catch((e: Error) => {
+    //     console.log(e);
+    //   });
+    // const familyDataService = FamilyDataService
+    // FamilyDataService.getAll().then((result: any) => {
+    //   const finalRes = FamilyDataService.mappingData(result)
+    //   // console.log(finalRes);
+    // });
   };
 
   return (
     <Box component="form" className={css.root} noValidate autoComplete="off">
+      {/* <form onSubmit={handleSubmit}> */}
       <Stack spacing={2}>
         <header className={css.header}>
           <h2 className={css.title}> Tambah Keluarga </h2>
-          <button className={css.close} onClick={closeHandler}>&#10005;</button>
+          <button className={css.close} onClick={closeHandler}>
+            &#10005;
+          </button>
         </header>
         <TextField
           required
@@ -129,6 +160,7 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
           Submit
         </Button>
       </Stack>
+      {/* </form> */}
     </Box>
   );
 };
