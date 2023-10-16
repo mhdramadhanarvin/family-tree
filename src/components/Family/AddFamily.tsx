@@ -28,10 +28,10 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
   //   setFormData({ ...formData, [name]: value });
   // }
 
-  // function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-  //   event.preventDefault(); 
-  //   // onSubmit(formData);
-  // }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    alert("event");
+    event.preventDefault();
+  };
 
   // const getType = (): void => {};
 
@@ -52,52 +52,58 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
   // const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
   const closeHandler = () => {};
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    let parents,
-      children,
-      siblings,
-      spouse = [];
-    // Access selected values for group1 and group2 in selectedValues object
-    // const { name, gender, relationType } = selectedValues;
+  // const handleSubmit = (event: any) => {
+  //   console.log(event)
+  //   event.preventDefault();
+  //   let parents,
+  //     children,
+  //     siblings,
+  //     spouse = [];
+  // Access selected values for group1 and group2 in selectedValues object
+  // const { name, gender, relationType } = selectedValues;
 
-    // Perform your submit logic here
-    // event.preventDefault();
-    // if ( selectedValues.relationType === "children") {
+  // Perform your submit logic here
+  // event.preventDefault();
+  // if ( selectedValues.relationType === "children") {
 
-    // } 
-    // FamilyDataService.create({
-    //   id: "123",
-    //   name: selectedValues.name,
-    //   gender: selectedValues.gender,
-    //   parents: [
-    //     {
-    //       id: selectedValues.parent,
-    //       type: "blood",
-    //     },
-    //   ],
-    //   children: [],
-    //   siblings: [],
-    //   spouses: [],
-    // })
-    //   .then(() => {
-    //     console.log("Created new item successfully!");
-    //     // this.setState({
-    //     //   submitted: true,
-    //     // });
-    //   })
-    //   .catch((e: Error) => {
-    //     console.log(e);
-    //   });
-    // const familyDataService = FamilyDataService
-    // FamilyDataService.getAll().then((result: any) => {
-    //   const finalRes = FamilyDataService.mappingData(result) 
-    // });
-  };
+  // }
+  // FamilyDataService.create({
+  //   id: "123",
+  //   name: selectedValues.name,
+  //   gender: selectedValues.gender,
+  //   parents: [
+  //     {
+  //       id: selectedValues.parent,
+  //       type: "blood",
+  //     },
+  //   ],
+  //   children: [],
+  //   siblings: [],
+  //   spouses: [],
+  // })
+  //   .then(() => {
+  //     console.log("Created new item successfully!");
+  //     // this.setState({
+  //     //   submitted: true,
+  //     // });
+  //   })
+  //   .catch((e: Error) => {
+  //     console.log(e);
+  //   });
+  // const familyDataService = FamilyDataService
+  // FamilyDataService.getAll().then((result: any) => {
+  //   const finalRes = FamilyDataService.mappingData(result)
+  // });
+  // };
 
   return (
-    <Box component="form" className={css.root} noValidate autoComplete="off">
-      {/* <form onSubmit={handleSubmit}> */}
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      className={css.root}
+      noValidate
+      autoComplete="off"
+    >
       <Stack spacing={2}>
         <header className={css.header}>
           <h2 className={css.title}> Tambah Keluarga </h2>
@@ -153,11 +159,15 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
             />
           </RadioGroup>
         </FormControl>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          // onClick={handleSubmit}
+        >
           Submit
         </Button>
       </Stack>
-      {/* </form> */}
     </Box>
   );
 };
