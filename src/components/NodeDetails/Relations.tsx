@@ -1,7 +1,6 @@
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback } from "react";
 import { Relation } from "relatives-tree/lib/types";
 import css from "./Relations.module.css";
-import { SOURCES, DEFAULT_SOURCE } from "../const";
 
 interface RelationsProps {
   allNode: any;

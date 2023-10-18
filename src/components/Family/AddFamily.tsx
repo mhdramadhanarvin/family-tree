@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Radio from "@mui/material/Radio";
@@ -10,37 +10,33 @@ import css from "./AddFamily.module.css";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import FamilyDataService from "../../services/FamilyDataService";
-import { Gender, RelType } from "relatives-tree/lib/types";
+import FamilyData, { Node } from "../../types/family.type";
+import { v4 as uuidv4 } from "uuid";
+import { Alert } from "@mui/material";
 
 interface AddFamilyProps {
-  onAdd: string;
+  onAdd: string | undefined;
+}
+
+interface FormSubmit {
+  parent: string | undefined;
+  name: string;
+  gender: string;
+  relationType: string;
+}
+
+interface AlertType {
+  message: string;
 }
 
 export const AddFamily = ({ ...props }: AddFamilyProps) => {
-  // const [formData, setFormData] = React.useState<UserData>({
-  //   parent: "",
-  //   name: "",
-  //   type: "",
-  // });
-
-  // function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
-  //   const { name, value } = event.target;
-  //   setFormData({ ...formData, [name]: value });
-  // }
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    alert("event");
-    event.preventDefault();
-  };
-
-  // const getType = (): void => {};
-
-  const [selectedValues, setSelectedValues] = React.useState({
+  const [selectedValues, setSelectedValues] = React.useState<FormSubmit>({
     parent: props.onAdd,
     name: "",
     gender: "male",
     relationType: "spouse",
   });
+  const [alert, setAlert] = useState<AlertType | undefined>();
 
   const handleChange = (group: string, value: string) => {
     setSelectedValues((prevSelectedValues) => ({
@@ -52,49 +48,180 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
   // const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
   const closeHandler = () => {};
 
-  // const handleSubmit = (event: any) => {
-  //   console.log(event)
-  //   event.preventDefault();
-  //   let parents,
-  //     children,
-  //     siblings,
-  //     spouse = [];
-  // Access selected values for group1 and group2 in selectedValues object
-  // const { name, gender, relationType } = selectedValues;
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-  // Perform your submit logic here
-  // event.preventDefault();
-  // if ( selectedValues.relationType === "children") {
+    // Access selected values for group1 and group2 in selectedValues object
+    const { parent, name, gender, relationType } = selectedValues;
 
-  // }
-  // FamilyDataService.create({
-  //   id: "123",
-  //   name: selectedValues.name,
-  //   gender: selectedValues.gender,
-  //   parents: [
-  //     {
-  //       id: selectedValues.parent,
-  //       type: "blood",
-  //     },
-  //   ],
-  //   children: [],
-  //   siblings: [],
-  //   spouses: [],
-  // })
-  //   .then(() => {
-  //     console.log("Created new item successfully!");
-  //     // this.setState({
-  //     //   submitted: true,
-  //     // });
-  //   })
-  //   .catch((e: Error) => {
-  //     console.log(e);
-  //   });
-  // const familyDataService = FamilyDataService
-  // FamilyDataService.getAll().then((result: any) => {
-  //   const finalRes = FamilyDataService.mappingData(result)
-  // });
-  // };
+    // validate data
+    if (await validateData(selectedValues)) {
+      // Perform your submit logic here
+      if (relationType === "children") {
+        //get data husband in parent (wife)
+        const spouseOfParentId = await FamilyDataService.getById(parent).then(
+          (data) => {
+            return data.spouses[0].id;
+          }
+        );
+        // gabungkan id suami dan istri untuk data parent
+        const parents = [spouseOfParentId, parent];
+
+        submitChildrenData(name, gender, parents);
+      } else if (relationType === "spouse") {
+        // submitSpouseData(name, gender, parent);
+      }
+
+      setSelectedValues({
+        parent: props.onAdd,
+        name: "",
+        gender: "male",
+        relationType: "spouse",
+      });
+    }
+  };
+
+  // function untuk tambah data anak
+  const submitChildrenData = async (
+    name: string,
+    gender: string,
+    parentId: Array<string>
+  ) => {
+    const parents = parentId.map((data) => {
+      return {
+        id: data,
+        type: "blood",
+      };
+    });
+
+    const newData: FamilyData = {
+      id: uuidv4(),
+      name: name,
+      gender: gender,
+      parents,
+      children: [],
+      siblings: [],
+      spouses: [],
+    };
+
+    FamilyDataService.create(newData);
+
+    // const allData = await FamilyDataService.getAll().then((data) => {
+    //   return data;
+    // });
+
+    // Find index array of parent data
+    // const indexOfRelation = allData.findIndex(
+    //   (data: any) => data.id === parentId
+    // );
+    // const parentData = allData.filter((data: any) => data.id === parentId);
+    // const mappingData = FamilyDataService.mappingData(parentData)[0];
+    // mappingData.children = [
+    //   ...mappingData.children,
+    //   {
+    //     id: newData.id,
+    //     type: "blood",
+    //   },
+    // ];
+
+    parentId.forEach(async (parent) => {
+      const getDataParent = await FamilyDataService.getById(parent);
+      getDataParent.children = [
+        ...getDataParent.children,
+        {
+          id: newData.id,
+          type: "blood",
+        },
+      ];
+
+      const indexData = await FamilyDataService.getIndexById(parent);
+      FamilyDataService.update({ ...getDataParent }, indexData);
+    });
+
+    // // Add children data in parents data
+    // FamilyDataService.update({ ...mappingData }, indexOfRelation);
+  };
+
+  // function untuk tambah data pasangan baru
+  const submitSpouseData = async (
+    name: string,
+    gender: string,
+    parentId: string
+  ) => {
+    const newData: FamilyData = {
+      id: uuidv4(),
+      name: name,
+      gender: gender,
+      parents: [],
+      children: [],
+      siblings: [],
+      spouses: [
+        {
+          id: parentId,
+          type: "married",
+        },
+      ],
+    };
+
+    FamilyDataService.create(newData)
+      .then((data) => console.log(data))
+      .catch((e: Error) => console.log(e));
+
+    const allData = await FamilyDataService.getAll().then((data) => {
+      return data;
+    });
+
+    const indexOfRelation = allData.findIndex(
+      (data: any) => data.id === parentId
+    );
+    const parentData = allData.filter((data: any) => data.id === parentId);
+    const mappingData = FamilyDataService.mappingData(parentData)[0];
+    mappingData.spouses = [
+      ...mappingData.spouses,
+      {
+        id: newData.id,
+        type: "married",
+      },
+    ];
+
+    //// Add children data in parents data
+    FamilyDataService.update({ ...mappingData }, indexOfRelation);
+  };
+
+  const validateData = async (value: FormSubmit) => {
+    const { name, gender, parent, relationType } = value;
+    // nama, gender, parent, relationType wajib diisi
+    let statusValidation = true;
+    if (!name) {
+      setAlert({ message: "Nama wajib diisi!" });
+      return (statusValidation = false);
+    } else if (!gender) {
+      setAlert({ message: "Jenis kelamin wajib diisi!" });
+      return (statusValidation = false);
+    } else if (!parent) {
+      setAlert({ message: "Relasi wajib diisi!" });
+      return (statusValidation = false);
+    } else if (!relationType) {
+      setAlert({ message: "Hubungan wajib diisi!" });
+      return (statusValidation = false);
+    }
+
+    // cek kalau dia laki-laki dan punya pasangan harus tambahkan dari pasangan perempuan
+    await FamilyDataService.getById(parent).then((parentData: any) => {
+      if (
+        parentData.spouses.length > 0 &&
+        parentData.gender === "male" &&
+        relationType === "children"
+      ) {
+        setAlert({
+          message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",
+        });
+        return (statusValidation = false);
+      }
+    });
+
+    return statusValidation;
+  };
 
   return (
     <Box
@@ -105,6 +232,16 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
       autoComplete="off"
     >
       <Stack spacing={2}>
+        {alert && (
+          <Alert
+            severity="error"
+            onClose={() => {
+              setAlert(undefined);
+            }}
+          >
+            {alert.message}
+          </Alert>
+        )}
         <header className={css.header}>
           <h2 className={css.title}> Tambah Keluarga </h2>
           <button className={css.close} onClick={closeHandler}>
@@ -165,7 +302,7 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
           color="primary"
           // onClick={handleSubmit}
         >
-          Submit
+          SIMPAN
         </Button>
       </Stack>
     </Box>

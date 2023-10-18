@@ -1,23 +1,42 @@
-import { child, get, ref, set } from "firebase/database";
+import { child, get, ref, update } from "firebase/database";
 import { database } from "../config/firebase";
-import { Node } from "../types/family.type"
-import { Gender } from "relatives-tree/lib/types";
-
-const db = ref(database, '/family');
+import FamilyData, { Node } from "../types/family.type"
+const path = '/family'
+const db = ref(database, path);
 
 class FamilyDataService {
   async getAll() {
     try {
       const snapshot = await get(child(db, `/`))
-      return snapshot.val()
+      const data = snapshot.val()
+      return this.mappingData(data)
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  create(familyData: Node) {
-    return set(db, familyData);
+  async create(familyData: FamilyData) {
+    // return set(db, familyData);
+    const keyLatestData = await this.getAll().then(data => { return data.length })
+    const updates: any = {};
+    updates[keyLatestData] = familyData;
+    return update(db, updates);
+  }
+
+  async update(familyData: any, index: number) {
+    const updates: any = {};
+    updates[index] = familyData;
+
+    return update(db, updates);
+  }
+
+  async getById(id: string | undefined) {
+    return this.getAll().then(data => data.filter((dataFirst) => dataFirst.id === id)[0])
+  }
+
+  async getIndexById(id: string) {
+    return this.getAll().then(data => data.findIndex((index: any) => index.id === id))
   }
 
   mappingData(familyData: Node[]) {

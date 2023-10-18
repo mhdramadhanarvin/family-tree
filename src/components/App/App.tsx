@@ -12,39 +12,22 @@ import { AddFamily } from "../Family/AddFamily";
 import css from "./App.module.css";
 import FamilyDataService from "../../services/FamilyDataService";
 import { Node } from "../../types/family.type";
-
-// interface Node {
-//   id: string;
-//   name?: string;
-//   gender: Gender;
-//   parents: readonly Relation[];
-//   children: readonly Relation[];
-//   siblings: readonly Relation[];
-//   spouses: readonly Relation[]; 
-//   placeholder?: boolean;
-// }
-
-interface ExtNode extends Node {
-  readonly top: number;
-  readonly left: number;
-  readonly hasSubTree: boolean;
-}
+import { ExtNode } from "relatives-tree/lib/types";
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
   const [nodes, setNodes] = useState(SOURCES[source]);
-  const firstNodeId = useMemo(() => nodes[0].id, [nodes]); 
+  const firstNodeId = useMemo(() => nodes[0].id, [nodes]);
   const [rootId, setRootId] = useState(firstNodeId);
 
   const [selectId, setSelectId] = useState<string>();
   const [hoverId, setHoverId] = useState<string>();
-  const [addFamilyId, setAddFamilyId] = useState<string>(); 
+  const [addFamilyId, setAddFamilyId] = useState<string>();
 
   useEffect(() => {
     FamilyDataService.getAll().then((result: Node[]) => {
-      const response = FamilyDataService.mappingData(result);
-      setRootId(response[0].id)
-      setNodes(response); 
+      setRootId(result[0].id);
+      setNodes(result);
     });
   }, [nodes, firstNodeId, rootId]);
 
@@ -61,7 +44,7 @@ export default React.memo(function App() {
   const seeDetailNode = (selectId: string) => {
     setSelectId(selectId);
     setAddFamilyId(undefined);
-  }; 
+  };
 
   return (
     <div className={css.root}>
