@@ -10,9 +10,16 @@ import { getNodeStyle } from "./utils";
 import { AddFamily } from "../Family/AddFamily";
 
 import css from "./App.module.css";
-import FamilyDataService from "../../services/FamilyDataService";
+import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import { Node } from "../../types/family.type";
 import { ExtNode } from "relatives-tree/lib/types";
+import { Session } from "@supabase/supabase-js";
+import { Auth } from "@supabase/auth-ui-react";
+import {
+  // Import predefined theme
+  ThemeSupa,
+} from "@supabase/auth-ui-shared";
+import { Box, Modal } from "@mui/material";
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
@@ -23,6 +30,8 @@ export default React.memo(function App() {
   const [selectId, setSelectId] = useState<string>();
   const [hoverId, setHoverId] = useState<string>();
   const [addFamilyId, setAddFamilyId] = useState<string>();
+  const [session, setSession] = useState<Session | null>(null);
+  const [showLogin, setShowLogin] = useState(false); 
 
   useEffect(() => {
     FamilyDataService.getAll().then((result: Node[]) => {
@@ -46,6 +55,24 @@ export default React.memo(function App() {
     setAddFamilyId(undefined);
   };
 
+  const signOut = async () => {
+    return await supabase.auth.signOut();
+  };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <div className={css.root}>
       <header className={css.header}>
@@ -53,6 +80,16 @@ export default React.memo(function App() {
           FamilyTree
           <span className={css.version}>version: {app.version}</span>
         </h1>
+        {!session && (
+          <span className={css.version} onClick={() => setShowLogin(true)}>
+            LOGIN
+          </span>
+        )}
+        {session && (
+          <span className={css.version} onClick={async () => signOut()}>
+            LOGOUT
+          </span>
+        )}
       </header>
       {nodes !== null && nodes.length > 0 && (
         <PinchZoomPan min={0.5} max={2.0} captureWheel className={css.wrapper}>
@@ -90,9 +127,30 @@ export default React.memo(function App() {
           onHover={setHoverId}
           onClear={() => setHoverId(undefined)}
           onAddFamily={setAddFamilyId}
+          onLogin={session}
         />
       )}
-      {addFamilyId && <AddFamily onAdd={addFamilyId} />}
+      {addFamilyId && session && <AddFamily onAdd={addFamilyId} />}
+      <Modal
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            width: 500,
+            backgroundColor: "primary.dark",
+            margin: "auto",
+            padding: 2,
+          }}
+        >
+          <Auth
+            supabaseClient={supabase}
+            appearance={{ theme: ThemeSupa }} 
+          />
+        </Box>
+      </Modal>
     </div>
   );
 });

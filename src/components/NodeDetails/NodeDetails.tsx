@@ -4,6 +4,8 @@ import { Relations } from "./Relations";
 import css from "./NodeDetails.module.css";
 import Button from "@mui/material/Button";
 import { Node } from "../../types/family.type";
+import { Session } from "@supabase/supabase-js";
+import { Box } from "@mui/material";
 
 interface NodeDetailsProps {
   node: Readonly<Node>;
@@ -13,6 +15,7 @@ interface NodeDetailsProps {
   onHover: (nodeId: string) => void;
   onClear: () => void;
   onAddFamily: (nodeId: string | undefined) => void;
+  onLogin: Session | null;
 }
 
 export const NodeDetails = memo(function NodeDetails({
@@ -30,6 +33,11 @@ export const NodeDetails = memo(function NodeDetails({
   return (
     <section className={classNames(css.root, className)}>
       <header className={css.header}>
+        {node.photo && (
+          <Box mt={2} textAlign="left">
+            <img src={node.photo} alt={node.photo} height="300px" />
+          </Box>
+        )}
         <h3 className={css.title}>{node.name}</h3>
         <button className={css.close} onClick={closeHandler}>
           &#10005;
@@ -64,9 +72,11 @@ export const NodeDetails = memo(function NodeDetails({
         title="Pasangan"
         items={node.spouses}
       />
-      <Button variant="contained" size="small" onClick={addFamilyHandler}>
-        TAMBAH KELUARGA
-      </Button>
+      {props.onLogin && (
+        <Button variant="contained" size="small" onClick={addFamilyHandler}>
+          TAMBAH KELUARGA
+        </Button>
+      )}
     </section>
   );
 });

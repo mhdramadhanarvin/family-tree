@@ -2,14 +2,18 @@ import { Gender, Relation } from "relatives-tree/lib/types";
 
 export default interface FamilyData {
   id: string;
-  name?: string;
+  name?: string | undefined;
   gender: string;
   parents: any;
   children: any;
   siblings: any;
   spouses: any;
   placeholder?: boolean;
-} 
+  birthday?: string;
+  address?: string;
+  job?: string;
+  photo?: string;
+}
 
 export interface Node {
   id: string;
@@ -18,9 +22,10 @@ export interface Node {
   parents: readonly Relation[];
   children: readonly Relation[];
   siblings: readonly Relation[];
-  spouses: readonly Relation[]; 
+  spouses: readonly Relation[];
   placeholder?: boolean;
   birthday?: string;
   address?: string;
-  job?: string; 
+  job?: string;
+  photo?: string;
 } 
