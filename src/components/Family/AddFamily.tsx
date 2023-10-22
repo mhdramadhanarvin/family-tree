@@ -113,13 +113,22 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         // get data anak dari pasangan
         const childrenOfSpouseId = await FamilyDataService.getById(parent).then(
           (data) => {
-            return data.children.length > 0 ? [data.children[0].id] : [];
+            // kalau dia punya anak dan belum punya pasangan
+            // ambil data anaknya
+            // untuk dimasukkan ke pasangan baru
+            return data.children.length > 0 && data.spouses.length < 1
+              ? [data.children[0].id]
+              : [];
           }
         );
-        // gabungkan id semua anak untuk pasangan baru
-        const childrens: string[] = [parent].concat(childrenOfSpouseId);
-        console.log(childrens);
-        // submitSpouseData(name, gender, parent);
+        // // gabungkan id semua anak untuk pasangan baru
+        // const childrens: string[] = [parent].concat(childrenOfSpouseId);
+        // console.log(childrens);
+        submitSpouseData(
+          { name, gender, birthday, address, job, photo },
+          parent,
+          childrenOfSpouseId
+        );
       }
     }
   };
@@ -186,15 +195,32 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
 
   // function untuk tambah data pasangan baru
   const submitSpouseData = async (
-    name: string,
-    gender: string,
-    parentId: string
+    baseData: any,
+    parentId: string,
+    childrenId: string[]
   ) => {
-    const newData: FamilyData = {
+    const { name, gender, birthday, address, job, photo } = baseData;
+
+    // siapkan structuk data anak untuk si pasangan baru
+    const childrens = childrenId.map((data: any) => {
+      return {
+        id: data,
+        type: "blood",
+      };
+    });
+
+    const uploadPhoto =
+      photo !== null ? await FamilyDataService.uploadImage(photo) : null;
+
+    const newData: any = {
       id: uuidv4(),
-      name: name,
-      gender: gender,
+      name,
+      gender,
       parents: [],
+      birthday,
+      address,
+      job,
+      photo: uploadPhoto,
       children: [],
       siblings: [],
       spouses: [
@@ -205,29 +231,33 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       ],
     };
 
-    FamilyDataService.create(newData)
-      .then((data) => console.log(data))
-      .catch((e: Error) => console.log(e));
+    const getAllData = await FamilyDataService.getAll();
+    const lengthData = await FamilyDataService.getLengthData();
 
-    const allData = await FamilyDataService.getAll().then((data) => {
-      return data;
-    });
+    // masukkan data pasangan baru dan anaknya
+    getAllData[lengthData] = newData;
 
-    const indexOfRelation = allData.findIndex(
-      (data: any) => data.id === parentId
-    );
-    const parentData = allData.filter((data: any) => data.id === parentId);
-    const mappingData = FamilyDataService.mappingData(parentData)[0];
-    mappingData.spouses = [
-      ...mappingData.spouses,
+    // tambahkan data pasangan baru sebagai pasangan di parent data
+    const getDataParent = await FamilyDataService.getById(parentId);
+    getDataParent.spouses = [
+      ...getDataParent.spouses,
       {
         id: newData.id,
-        type: "married",
+        type: RelType.married,
       },
     ];
+    const indexData = await FamilyDataService.getIndexById(parentId);
+    getAllData[indexData] = await getDataParent;
 
-    //// Add children data in parents data
-    // FamilyDataService.update({ ...mappingData }, indexOfRelation);
+    // simpan semua struktur
+    await FamilyDataService.update(getAllData);
+
+    setAlert({
+      message: "Berhasil menambahkan keluarga!",
+      type: "success",
+    });
+    setShowAlert(true);
+    setOnProgress(false);
   };
 
   const validateData = async (value: FormSubmit) => {
@@ -241,33 +271,33 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       return (statusValidation = false);
     } else if (!gender) {
       setAlert({ message: "Jenis kelamin wajib diisi!", type: "error" });
+      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     } else if (!parent) {
       setAlert({ message: "Relasi wajib diisi!", type: "error" });
+      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     } else if (!relationType) {
       setAlert({ message: "Hubungan wajib diisi!", type: "error" });
+      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     }
 
     // cek kalau dia laki-laki dan punya pasangan harus tambahkan dari pasangan perempuan
-    await FamilyDataService.getById(parent).then((parentData: any) => {
-      if (
-        parentData.spouses.length > 0 &&
-        parentData.gender === "male" &&
-        relationType === "children"
-      ) {
-        setAlert({
-          message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",
-          type: "error",
-        });
-        setOnProgress(false);
-        return (statusValidation = false);
-      }
-    });
+    // await FamilyDataService.getById(parent).then((parentData: any) => {
+    //   if (parentData.spouses.length > 1 && relationType === "children") {
+    //     setAlert({
+    //       message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",
+    //       type: "error",
+    //     });
+    //     setShowAlert(true);
+    //     setOnProgress(false);
+    //     return (statusValidation = false);
+    //   }
+    // });
 
     return statusValidation;
   };
