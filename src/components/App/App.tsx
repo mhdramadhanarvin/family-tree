@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
 import app from "../../..//package.json";
 import ReactFamilyTree from "react-family-tree";
-// import { SourceSelect } from '../SourceSelect/SourceSelect';
 import { PinchZoomPan } from "../PinchZoomPan/PinchZoomPan";
 import { FamilyNode } from "../FamilyNode/FamilyNode";
 import { NodeDetails } from "../NodeDetails/NodeDetails";
@@ -14,12 +13,8 @@ import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import { Node } from "../../types/family.type";
 import { ExtNode } from "relatives-tree/lib/types";
 import { Session } from "@supabase/supabase-js";
-import { Auth } from "@supabase/auth-ui-react";
-import {
-  // Import predefined theme
-  ThemeSupa,
-} from "@supabase/auth-ui-shared";
 import { Box, Modal } from "@mui/material";
+import { Login } from "../Auth/Login";
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
@@ -135,7 +130,9 @@ export default React.memo(function App() {
         />
       )}
 
-      {addFamily && session && <AddFamily onAdd={addFamilyId} onShow={setAddFamily} />}
+      {addFamily && session && (
+        <AddFamily onAdd={addFamilyId} onShow={setAddFamily} />
+      )}
 
       <Modal
         open={showLogin}
@@ -145,13 +142,16 @@ export default React.memo(function App() {
       >
         <Box
           sx={{
-            width: 500,
-            backgroundColor: "primary.dark",
-            margin: "auto",
-            padding: 2,
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
+          {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+            <LockOutlinedIcon />
+          </Avatar> */}
+          <Login onShow={setShowLogin} />
         </Box>
       </Modal>
     </div>

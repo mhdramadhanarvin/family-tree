@@ -10,7 +10,6 @@ import css from "./AddFamily.module.css";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import FamilyDataService from "../../services/FamilyDataService";
-import FamilyData from "../../types/family.type";
 import { v4 as uuidv4 } from "uuid";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
 import { RelType } from "relatives-tree/lib/types";
@@ -324,6 +323,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
             <Alert
               onClose={() => setShowAlert(false)}
               severity={alert.type}
+              variant="filled"
               sx={{ width: "100%" }}
             >
               {alert.message}
