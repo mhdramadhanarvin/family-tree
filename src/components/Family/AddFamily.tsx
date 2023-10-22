@@ -17,7 +17,8 @@ import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
 
 interface AddFamilyProps {
-  onAdd: any;
+  onAdd: string | undefined
+  onShow: (open: boolean) => void;
 }
 
 interface FormSubmit {
@@ -55,7 +56,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     }));
   };
 
-  const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
+  const closeHandler = useCallback(() => props.onShow(false), [props]); 
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined
   );
@@ -102,6 +103,15 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           parents
         );
       } else if (relationType === "spouse") {
+        // get data anak dari pasangan
+        const childrenOfSpouseId = await FamilyDataService.getById(parent).then(
+          (data) => {
+            return data.children.length > 0 ? [data.children[0].id] : [];
+          }
+        );
+        // gabungkan id semua anak untuk pasangan baru
+        const childrens: string[] = [parent].concat(childrenOfSpouseId);
+        console.log(childrens);
         // submitSpouseData(name, gender, parent);
       }
     }

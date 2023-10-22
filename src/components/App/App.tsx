@@ -30,8 +30,9 @@ export default React.memo(function App() {
   const [selectId, setSelectId] = useState<string>();
   const [hoverId, setHoverId] = useState<string>();
   const [addFamilyId, setAddFamilyId] = useState<string>();
+  const [addFamily, setAddFamily] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
-  const [showLogin, setShowLogin] = useState(false); 
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     FamilyDataService.getAll().then((result: Node[]) => {
@@ -52,7 +53,7 @@ export default React.memo(function App() {
 
   const seeDetailNode = (selectId: string) => {
     setSelectId(selectId);
-    setAddFamilyId(undefined);
+    setAddFamily(false);
   };
 
   const signOut = async () => {
@@ -126,12 +127,15 @@ export default React.memo(function App() {
           onSelect={setSelectId}
           onHover={setHoverId}
           onClear={() => setHoverId(undefined)}
-          onAddFamily={setAddFamilyId}
+          onAddFamily={() => {
+            setAddFamilyId(selectId);
+            setAddFamily(true);
+          }}
           onLogin={session}
         />
       )}
 
-      {addFamilyId && session && <AddFamily onAdd={setAddFamilyId} />}
+      {addFamily && session && <AddFamily onAdd={addFamilyId} onShow={setAddFamily} />}
 
       <Modal
         open={showLogin}
@@ -147,10 +151,7 @@ export default React.memo(function App() {
             padding: 2,
           }}
         >
-          <Auth
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }} 
-          />
+          <Auth supabaseClient={supabase} appearance={{ theme: ThemeSupa }} />
         </Box>
       </Modal>
     </div>
