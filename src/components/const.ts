@@ -15,27 +15,21 @@ import { Node } from '../types/family.type';
 export const NODE_WIDTH = 100;
 export const NODE_HEIGHT = 120;
 
-// interface Node {
-//   id: string;
-//   name?: string;
-//   gender: Gender;
-//   parents: readonly Relation[];
-//   children: readonly Relation[];
-//   siblings: readonly Relation[];
-//   spouses: readonly Relation[];
-//   placeholder?: boolean;
-// };
+if (localStorage.getItem('family-tree') == null) {
+  localStorage.setItem('family-tree', JSON.stringify([
+    {
+      "id": "user1",
+      "name": "Nama",
+      "gender": "male",
+      "parents": [],
+      "siblings": [],
+      "spouses": [],
+      "children": []
+    }
+  ]))
+}
 
 export const SOURCES = {
-  // 'average-tree.json': averageTree,
-  // 'couple.json': couple,
-  // 'diff-parents.json': diffParents,
-  // 'divorced-parents.json': divorcedParents,
-  // 'empty.json': empty,
-  // 'several-spouses.json': severalSpouses,
-  // 'simple-family.json': simpleFamily,
-  // 'test-tree-n1.json': testTreeN1,
-  // 'test-tree-n2.json': testTreeN2,
   'new': JSON.parse(localStorage.getItem('family-tree') || '{}'),
 } as Readonly<{ [key: string]: readonly Readonly<Node>[] }>;
 
