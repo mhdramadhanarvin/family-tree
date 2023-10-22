@@ -38,6 +38,8 @@ export const NodeDetails = memo(function NodeDetails({
             <img src={node.photo} alt={node.photo} height="300px" />
           </Box>
         )}
+      </header>
+      <header className={css.header}>
         <h3 className={css.title}>{node.name}</h3>
         <button className={css.close} onClick={closeHandler}>
           &#10005;

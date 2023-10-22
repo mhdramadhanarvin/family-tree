@@ -25,11 +25,13 @@
 }
 
 .male {
-  background: #90CAF9;
+  background: #4A9E00;
+  /* background: #90CAF9; */
 }
 
 .female {
-  background: #F48FB1;
+  background: #FBCC10;
+  /* background: #F48FB1; */
 }
 
 .isRoot {

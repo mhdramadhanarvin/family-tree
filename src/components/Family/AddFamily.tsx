@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Radio from "@mui/material/Radio";
@@ -9,28 +9,15 @@ import FormLabel from "@mui/material/FormLabel";
 import css from "./AddFamily.module.css";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import FamilyDataService, { supabase } from "../../services/FamilyDataService";
+import FamilyDataService from "../../services/FamilyDataService";
 import FamilyData from "../../types/family.type";
 import { v4 as uuidv4 } from "uuid";
-import { Alert, ToggleButton, styled } from "@mui/material";
+import { Alert } from "@mui/material";
 import { RelType } from "relatives-tree/lib/types";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { CheckCircleRounded } from "@mui/icons-material";
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+import Checkbox from "@mui/material/Checkbox";
 
 interface AddFamilyProps {
-  onAdd: string | undefined;
+  onAdd: any;
 }
 
 interface FormSubmit {
@@ -48,7 +35,7 @@ interface AlertType {
   message: string;
 }
 
-export const AddFamily = ({ ...props }: AddFamilyProps) => {
+export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
   const [selectedValues, setSelectedValues] = React.useState<FormSubmit>({
     parent: props.onAdd,
     name: "",
@@ -68,8 +55,7 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
     }));
   };
 
-  // const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
-  const closeHandler = () => {};
+  const closeHandler = useCallback(() => props.onAdd(undefined), [props]);
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined
   );
@@ -80,7 +66,6 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
     if (selectedImage) {
       setImageUrl(URL.createObjectURL(selectedImage));
       handleChange("photo", selectedImage);
-      console.log(selectedImage);
     }
   }, [selectedImage]);
 
@@ -344,23 +329,14 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
             />
           </RadioGroup>
         </FormControl>
-        {/* <Button
-          component="label"
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload file
-          <VisuallyHiddenInput type="file" />
-        </Button> */}
         <input
           accept="image/*"
           type="file"
           id="select-image"
           style={{ display: "none" }}
-          // onChange={(e) => setSelectedImage(!e.target.files[0])}
           onChange={(e: React.FormEvent<HTMLInputElement>) => {
             setSelectedImage((e.target as HTMLInputElement)?.files?.[0]);
-            // handleChange("photo", (e.target as HTMLInputElement)?.files?.[0]);
+            setToggleImage(true);
           }}
         />
         <label htmlFor="select-image">
@@ -368,30 +344,24 @@ export const AddFamily = ({ ...props }: AddFamilyProps) => {
             Upload Image
           </Button>
         </label>
-        <ToggleButton
-          value="check"
-          selected={toggleImage}
-          onChange={() => {
-            setToggleImage(!toggleImage);
+        <Checkbox
+          checked={toggleImage}
+          onChange={(e) => setToggleImage(e.target.checked)}
+          sx={{
+            width: 10,
           }}
-        >
-          <CheckCircleRounded />
-        </ToggleButton>
-        {imageUrl && selectedImage && (
+        />
+        {toggleImage ? "Sembunyikan" : "Tampilkan"} Gambar
+        {imageUrl && toggleImage && (
           <Box mt={2} textAlign="left">
             <div>Image Preview:</div>
-            <img src={imageUrl} alt={selectedImage.name} height="300px" />
+            <img src={imageUrl} alt={imageUrl} height="300px" />
           </Box>
         )}
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          // onClick={handleSubmit}
-        >
+        <Button type="submit" variant="contained" color="primary">
           SIMPAN
         </Button>
       </Stack>
     </Box>
   );
-};
+});

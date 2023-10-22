@@ -130,7 +130,9 @@ export default React.memo(function App() {
           onLogin={session}
         />
       )}
-      {addFamilyId && session && <AddFamily onAdd={addFamilyId} />}
+
+      {addFamilyId && session && <AddFamily onAdd={setAddFamilyId} />}
+
       <Modal
         open={showLogin}
         onClose={() => setShowLogin(false)}
