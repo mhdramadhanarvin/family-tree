@@ -12,12 +12,12 @@ import Button from "@mui/material/Button";
 import FamilyDataService from "../../services/FamilyDataService";
 import FamilyData from "../../types/family.type";
 import { v4 as uuidv4 } from "uuid";
-import { Alert } from "@mui/material";
+import { Alert, CircularProgress, Snackbar } from "@mui/material";
 import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
 
 interface AddFamilyProps {
-  onAdd: string | undefined
+  onAdd: string | undefined;
   onShow: (open: boolean) => void;
 }
 
@@ -34,6 +34,7 @@ interface FormSubmit {
 
 interface AlertType {
   message: string;
+  type: "error" | "warning" | "info" | "success";
 }
 
 export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
@@ -48,6 +49,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     photo: null,
   });
   const [alert, setAlert] = useState<AlertType | undefined>();
+  const [showAlert, setShowAlert] = useState<boolean>(false);
 
   const handleChange = (group: string, value: any) => {
     setSelectedValues((prevSelectedValues) => ({
@@ -56,7 +58,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     }));
   };
 
-  const closeHandler = useCallback(() => props.onShow(false), [props]); 
+  const closeHandler = useCallback(() => props.onShow(false), [props]);
   const [selectedImage, setSelectedImage] = useState<File | undefined>(
     undefined
   );
@@ -69,6 +71,8 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       handleChange("photo", selectedImage);
     }
   }, [selectedImage]);
+
+  const [onProgress, setOnProgress] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -86,6 +90,9 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     } = selectedValues;
 
     // validate data
+
+    setOnProgress(true);
+
     if (await validateData(selectedValues)) {
       // Perform your submit logic here
       if (relationType === "children") {
@@ -127,7 +134,8 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       };
     });
 
-    const uploadPhoto = await FamilyDataService.uploadImage(photo);
+    const uploadPhoto =
+      photo !== null ? await FamilyDataService.uploadImage(photo) : null;
 
     const newData: any = {
       id: uuidv4(),
@@ -165,8 +173,15 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       })
     );
 
-    // // Add children data in parents data
-    const updatedData = await FamilyDataService.update(getAllData);
+    // // Add data in children and parents updated
+    await FamilyDataService.update(getAllData);
+
+    setAlert({
+      message: "Berhasil menambahkan keluarga!",
+      type: "success",
+    });
+    setShowAlert(true);
+    setOnProgress(false);
   };
 
   // function untuk tambah data pasangan baru
@@ -220,16 +235,21 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     // nama, gender, parent, relationType wajib diisi
     let statusValidation = true;
     if (!name) {
-      setAlert({ message: "Nama wajib diisi!" });
+      setAlert({ message: "Nama wajib diisi!", type: "error" });
+      setShowAlert(true);
+      setOnProgress(false);
       return (statusValidation = false);
     } else if (!gender) {
-      setAlert({ message: "Jenis kelamin wajib diisi!" });
+      setAlert({ message: "Jenis kelamin wajib diisi!", type: "error" });
+      setOnProgress(false);
       return (statusValidation = false);
     } else if (!parent) {
-      setAlert({ message: "Relasi wajib diisi!" });
+      setAlert({ message: "Relasi wajib diisi!", type: "error" });
+      setOnProgress(false);
       return (statusValidation = false);
     } else if (!relationType) {
-      setAlert({ message: "Hubungan wajib diisi!" });
+      setAlert({ message: "Hubungan wajib diisi!", type: "error" });
+      setOnProgress(false);
       return (statusValidation = false);
     }
 
@@ -242,7 +262,9 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       ) {
         setAlert({
           message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",
+          type: "error",
         });
+        setOnProgress(false);
         return (statusValidation = false);
       }
     });
@@ -260,17 +282,29 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     >
       <Stack spacing={2}>
         {alert && (
-          <Alert
-            severity="error"
-            onClose={() => {
-              setAlert(undefined);
+          <Snackbar
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
             }}
+            open={showAlert}
+            autoHideDuration={6000}
+            onClose={() => setShowAlert(false)}
           >
-            {alert.message}
-          </Alert>
+            <Alert
+              onClose={() => setShowAlert(false)}
+              severity={alert.type}
+              sx={{ width: "100%" }}
+            >
+              {alert.message}
+            </Alert>
+          </Snackbar>
         )}
         <header className={css.header}>
-          <h2 className={css.title}> Tambah Keluarga </h2>
+          <h2 className={css.title} onClick={() => setShowAlert(true)}>
+            {" "}
+            Tambah Keluarga{" "}
+          </h2>
           <button className={css.close} onClick={closeHandler}>
             &#10005;
           </button>
@@ -351,7 +385,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         />
         <label htmlFor="select-image">
           <Button variant="contained" color="primary" component="span">
-            Upload Image
+            Upload Foto
           </Button>
         </label>
         <Checkbox
@@ -369,7 +403,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           </Box>
         )}
         <Button type="submit" variant="contained" color="primary">
-          SIMPAN
+          {onProgress ? <CircularProgress color="inherit" /> : "SIMPAN"}
         </Button>
       </Stack>
     </Box>
