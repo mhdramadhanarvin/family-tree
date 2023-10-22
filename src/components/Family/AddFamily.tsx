@@ -202,7 +202,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     const { name, gender, birthday, address, job, photo } = baseData;
 
     // siapkan structuk data anak untuk si pasangan baru
-    const childrens = childrenId.map((data: any) => {
+    const children = childrenId.map((data: any) => {
       return {
         id: data,
         type: "blood",
@@ -221,7 +221,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       address,
       job,
       photo: uploadPhoto,
-      children: [],
+      children,
       siblings: [],
       spouses: [
         {
