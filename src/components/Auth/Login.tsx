@@ -45,7 +45,7 @@ export const Login = ({ ...props }: LoginProps) => {
 
     const { email, password } = selectedValues;
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -56,6 +56,7 @@ export const Login = ({ ...props }: LoginProps) => {
         type: "error",
       });
     } else {
+      console.log(data);
       setAlert({
         message: "Berhasil Login, silahkan menunggu...",
         type: "success",

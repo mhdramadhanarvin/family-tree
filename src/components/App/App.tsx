@@ -15,6 +15,7 @@ import { ExtNode } from "relatives-tree/lib/types";
 import { Session } from "@supabase/supabase-js";
 import { Box, Modal } from "@mui/material";
 import { Login } from "../Auth/Login";
+import { Alert } from "../Skeleton/Alert";
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
@@ -29,33 +30,28 @@ export default React.memo(function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [showLogin, setShowLogin] = useState(false);
 
-  useEffect(() => {
-    FamilyDataService.getAll().then((result: Node[]) => {
-      setRootId(result[0].id);
-      setNodes(result);
-    });
-  }, [nodes, firstNodeId, rootId]);
-
-  const resetRootHandler = useCallback(
-    () => setRootId(firstNodeId),
-    [firstNodeId]
-  );
-
-  const selected = useMemo(
-    () => (nodes ? nodes.find((item) => item.id === selectId) : null),
-    [nodes, selectId]
-  );
-
-  const seeDetailNode = (selectId: string) => {
-    setSelectId(selectId);
-    setAddFamily(false);
-  };
-
-  const signOut = async () => {
-    return await supabase.auth.signOut();
-  };
+  interface AlertType {
+    title: string;
+    message: string;
+    type: "error" | "warning" | "info" | "success";
+  }
 
   useEffect(() => {
+    FamilyDataService.getAll()
+      .then((result: Node[]) => {
+        setAlert(undefined);
+        setRootId(result[0].id);
+        setNodes(result);
+      })
+      .catch((e: Error) => {
+        console.log(e);
+        setAlert({
+          title: "Terjadi kesalahan",
+          message: e.message + ". Please refresh..",
+          type: "error",
+        });
+      });
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
@@ -67,10 +63,50 @@ export default React.memo(function App() {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [nodes, rootId]);
+
+  const resetRootHandler = useCallback(
+    () => setRootId(firstNodeId),
+    [firstNodeId]
+  );
+
+  const selected = useMemo(
+    () => (nodes ? nodes.find((item) => item.id === selectId) : null),
+    [nodes, selectId]
+  );
+
+  const [alert, setAlert] = useState<AlertType | undefined>(undefined);
+
+  const seeDetailNode = (selectId: string) => {
+    setSelectId(selectId);
+    setAddFamily(false);
+  };
+
+  const signOut = async () => {
+    return await supabase.auth.signOut();
+  };
 
   return (
     <div className={css.root}>
+      {alert && (
+        <Alert
+          open={true}
+          onClose={() => {}}
+          style={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+          message={alert.message}
+          title={alert.title}
+        />
+      )}
       <header className={css.header}>
         <h1 className={css.title}>
           FamilyTree
@@ -83,7 +119,7 @@ export default React.memo(function App() {
         )}
         {session && (
           <span className={css.version} onClick={async () => signOut()}>
-            LOGOUT
+            {session.user.email} - LOGOUT
           </span>
         )}
       </header>
@@ -148,9 +184,6 @@ export default React.memo(function App() {
             alignItems: "center",
           }}
         >
-          {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar> */}
           <Login onShow={setShowLogin} />
         </Box>
       </Modal>

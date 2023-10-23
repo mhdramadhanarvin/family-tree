@@ -1,5 +1,3 @@
-import { child, get, ref, update } from "firebase/database";
-import { database } from "../config/firebase";
 import FamilyData, { Node } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
@@ -7,68 +5,22 @@ import { v4 as uuidv4 } from "uuid";
 export const supabase = createClient(process.env.REACT_APP_SUPABASE_HOST || "", process.env.REACT_APP_SUPABASE_KEY || "");
 
 const tableName = 'family'
-const path = '/family'
-const db = ref(database, path);
 
 class FamilyDataService {
-  async getAll(): Promise<Node[]> {
-    try {
-      const { data }: any = await supabase
-        .from(tableName)
-        .select('tree')
-        .single()
+  async getAll(): Promise<Node[] | any> {
+    const { data, error }: any = await supabase
+      .from(tableName)
+      .select('tree')
+      .single()
+
+    if (error) {
+      throw error
+    } else if (data) {
       return this.mappingData(data.tree)
-    } catch (error) {
-      console.error(error);
-      throw error;
     }
   }
 
-  async create(familyData: any) {
-    // return set(db, familyData);
-    // const keyLatestData = await this.getAll().then(data => { return data.length })
-    // const updates: any = {};
-    // updates[keyLatestData] = familyData;
-    // return update(db, updates);
-    // return await supabase.from(tableName).insert({
-    //   tree: [
-    //     {
-    //       a: 1
-    //     }, {
-    //       b: 2
-    //     }
-    //   ],
-    //   created_at: new Date(),
-    //   updated_at: new Date()
-    // })
-    // return this.getAll().then(async (data) => {
-    //   // return data.push(familyData) 
-    //   // return data.push(familyData)
-    // const getIndex = await this.getIndexById()
-    const length = (await this.getAll()).length
-    // return length
-    return await
-      supabase
-        .from(tableName)
-        .upsert({
-          // id: 1,
-          tree: {
-            name: "A"
-          },
-          created_at: new Date()
-        },
-        )
-        .select()
-    // .update({ tree: data.push(familyData) })
-    // .eq('tree -> id', 'user19')
-    // })
-  }
-
-  async update(familyData: any) {
-    // const updates: any = {};
-    // updates[index] = familyData;
-
-    // return update(db, updates); 
+  async update(familyData: FamilyData[]) {
     const { error } = await supabase
       .from(tableName)
       .update({ tree: familyData })
@@ -82,7 +34,6 @@ class FamilyDataService {
 
   async getIndexById(id: string) {
     return this.getAll().then(data => data.findIndex((index: any) => index.id === id))
-    // return await supabase.from(tableName).select('*');
   }
 
   async getLengthData() {
@@ -113,6 +64,30 @@ class FamilyDataService {
     });
   }
 
+  // async getAndSetLocalStorage() {
+  //   const local = localStorage.getItem('family-tree') || '{}'
+  //   const expired = JSON.parse(local).expired_at
+  //   const date = new Date();
+
+  //   if (expired === "" || expired < date.valueOf()) {
+  //     const getData = await this.getAll()
+  //     const compactData = JSON.stringify({
+  //       "tree": getData,
+  //       "expired_at": date.setDate(date.getDate() + 1).valueOf()
+  //     })
+  //     localStorage.setItem('family-tree', compactData)
+  //     return JSON.parse(compactData)
+  //   }
+  // }
+
+  // resyncData() {
+  //   const data = JSON.parse(localStorage.getItem('family-tree') || '{}')
+
+  //   localStorage.setItem('family-tree', JSON.stringify({
+  //     "tree": data.tree,
+  //     "expired_at": ""
+  //   }))
+  // }
 
   //STORAGE
   async uploadImage(file: File) {
