@@ -14,6 +14,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
 import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
+import { AlertType } from "../../types/family.type";
 
 interface AddFamilyProps {
   onAdd: string | undefined;
@@ -29,11 +30,6 @@ interface FormSubmit {
   address: string;
   job: string | null;
   photo: any;
-}
-
-interface AlertType {
-  message: string;
-  type: "error" | "warning" | "info" | "success";
 }
 
 export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
@@ -108,6 +104,16 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           { name, gender, birthday, address, job, photo },
           parents
         );
+        setSelectedValues({
+          parent: props.onAdd,
+          name: "",
+          gender: "male",
+          relationType: "spouse",
+          birthday: "",
+          address: "",
+          job: "",
+          photo: null,
+        });
       } else if (relationType === "spouse") {
         // get data anak dari pasangan
         const childrenOfSpouseId = await FamilyDataService.getById(parent).then(
@@ -121,13 +127,21 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           }
         );
         // // gabungkan id semua anak untuk pasangan baru
-        // const childrens: string[] = [parent].concat(childrenOfSpouseId);
-        // console.log(childrens);
         submitSpouseData(
           { name, gender, birthday, address, job, photo },
           parent,
           childrenOfSpouseId
         );
+        setSelectedValues({
+          parent: props.onAdd,
+          name: "",
+          gender: "male",
+          relationType: "spouse",
+          birthday: "",
+          address: "",
+          job: "",
+          photo: null,
+        });
       }
     }
   };

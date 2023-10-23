@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, useEffect } from "react";
-import app from "../../..//package.json";
 import ReactFamilyTree from "react-family-tree";
 import { PinchZoomPan } from "../PinchZoomPan/PinchZoomPan";
 import { FamilyNode } from "../FamilyNode/FamilyNode";
@@ -7,8 +6,6 @@ import { NodeDetails } from "../NodeDetails/NodeDetails";
 import { NODE_WIDTH, NODE_HEIGHT, SOURCES, DEFAULT_SOURCE } from "../const";
 import { getNodeStyle } from "./utils";
 import { AddFamily } from "../Family/AddFamily";
-
-import css from "./App.module.css";
 import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import { Node } from "../../types/family.type";
 import { ExtNode } from "relatives-tree/lib/types";
@@ -16,6 +13,9 @@ import { Session } from "@supabase/supabase-js";
 import { Box, Modal } from "@mui/material";
 import { Login } from "../Auth/Login";
 import { Alert } from "../Skeleton/Alert";
+
+import css from "./App.module.css";
+import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
@@ -29,6 +29,7 @@ export default React.memo(function App() {
   const [addFamily, setAddFamily] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+  const [userRole, setUserRole] = useState<number>();
 
   interface AlertType {
     title: string;
@@ -54,6 +55,13 @@ export default React.memo(function App() {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+
+      if (session) {
+        const userId: string = session.user.id;
+        FamilyDataService.getProfileById(userId).then((dataProfile): any => {
+          setUserRole(dataProfile.role_id);
+        });
+      }
     });
 
     const {
@@ -110,7 +118,7 @@ export default React.memo(function App() {
       <header className={css.header}>
         <h1 className={css.title}>
           FamilyTree
-          <span className={css.version}>version: {app.version}</span>
+          {/* <span className={css.version}>version: {app.version}</span> */}
         </h1>
         {!session && (
           <span className={css.version} onClick={() => setShowLogin(true)}>
@@ -187,6 +195,7 @@ export default React.memo(function App() {
           <Login onShow={setShowLogin} />
         </Box>
       </Modal>
+      {userRole === 1 && <SuperAdminAccess />}
     </div>
   );
 });

@@ -29,3 +29,13 @@ export interface Node {
   job?: string;
   photo?: string;
 } 
+
+export interface NewUserType {
+  email: string;
+  password: string;
+}
+
+export interface AlertType {
+  message: string;
+  type: "error" | "warning" | "info" | "success";
+}
