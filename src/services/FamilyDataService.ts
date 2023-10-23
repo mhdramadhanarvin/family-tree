@@ -1,4 +1,4 @@
-import FamilyData, { Node } from "../types/family.type"
+import FamilyData, { NewUserType, Node } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -62,6 +62,68 @@ class FamilyDataService {
       };
       return mappedData;
     });
+  }
+
+  async createSuperadminUser() {
+    const { count } = await supabase
+      .from('profile')
+      .select('*', { count: 'exact', head: true })
+
+    if (count === 0) {
+      const { data: dataAuth, error: authError } = await supabase.auth.signUp({
+        email: process.env.REACT_APP_ADMIN_EMAIL || "",
+        password: "admin123"
+      })
+
+      if (authError) {
+        throw authError
+      } else if (dataAuth) {
+        const userId = dataAuth?.user?.id
+        const { data: dataProfile, error: insertError } = await supabase.from('profile').insert({
+          id: userId,
+          role_id: 2,
+          name: "Administrator"
+        })
+        if (insertError) {
+          throw insertError
+        } else if (dataProfile) {
+          console.log(dataProfile)
+        }
+      }
+    }
+  }
+
+  async getProfileById(userId: string) {
+    const { data, error } = await supabase.from('profile').select('*').eq('id', userId).single()
+
+    if (error) {
+      throw error
+    } else if (data) {
+      return data
+    }
+  }
+
+  async createNewUser({ email, password }: NewUserType) {
+    const { data: dataAuth, error: authError } = await supabase.auth.signUp({
+      email,
+      password
+    })
+
+    if (authError) {
+      throw authError
+    } else if (dataAuth) {
+      const userId = dataAuth?.user?.id
+      const { data: dataProfile, error: insertError } = await supabase.from('profile').insert({
+        id: userId,
+        role_id: 2,
+        name: ""
+      })
+      if (insertError) {
+        throw insertError
+      } else if (dataProfile) {
+        return dataProfile
+      }
+    }
   }
 
   // async getAndSetLocalStorage() {
