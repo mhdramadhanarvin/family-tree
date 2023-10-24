@@ -6,8 +6,7 @@ import SpeedDialAction from "@mui/material/SpeedDialAction";
 import { AccountTree, PeopleAlt, PersonAdd } from "@mui/icons-material"; 
 import { CreateUser } from "../Auth/CreateUser";
 
-const actions = [
-  { id: 1, icon: <PersonAdd />, name: "Tambah Pengguna" },
+const actions = [ 
   { id: 2, icon: <PeopleAlt />, name: "Daftar Pengguna" },
   { id: 3, icon: <AccountTree />, name: "Keluarga" },
 ];

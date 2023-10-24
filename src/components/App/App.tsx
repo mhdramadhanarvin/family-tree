@@ -16,6 +16,7 @@ import { Alert } from "../Skeleton/Alert";
 
 import css from "./App.module.css";
 import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
+import { Register } from "../Auth/Register";
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
@@ -29,7 +30,8 @@ export default React.memo(function App() {
   const [addFamily, setAddFamily] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
   const [showLogin, setShowLogin] = useState(false);
-  const [userRole, setUserRole] = useState<number>();
+  const [showRegister, setShowRegister] = useState(false);
+  const [userRole, setUserRole] = useState<number | undefined>(undefined);
 
   interface AlertType {
     title: string;
@@ -45,7 +47,6 @@ export default React.memo(function App() {
         setNodes(result);
       })
       .catch((e: Error) => {
-        console.log(e);
         setAlert({
           title: "Terjadi kesalahan",
           message: e.message + ". Please refresh..",
@@ -56,11 +57,10 @@ export default React.memo(function App() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
 
-      if (session) {
-        const userId: string = session.user.id;
-        FamilyDataService.getProfileById(userId).then((dataProfile): any => {
-          setUserRole(dataProfile.role_id);
-        });
+      if (session?.user.email === process.env.REACT_APP_ADMIN_EMAIL) {
+        setUserRole(1);
+      } else {
+        setUserRole(2);
       }
     });
 
@@ -68,10 +68,15 @@ export default React.memo(function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
+      if (session?.user.email === process.env.REACT_APP_ADMIN_EMAIL) {
+        setUserRole(1);
+      } else {
+        setUserRole(2);
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [nodes, rootId]);
+  }, [nodes, rootId, session]);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),
@@ -91,6 +96,7 @@ export default React.memo(function App() {
   };
 
   const signOut = async () => {
+    setUserRole(undefined);
     return await supabase.auth.signOut();
   };
 
@@ -116,14 +122,20 @@ export default React.memo(function App() {
         />
       )}
       <header className={css.header}>
-        <h1 className={css.title}>
-          FamilyTree
-          {/* <span className={css.version}>version: {app.version}</span> */}
-        </h1>
+        <h1 className={css.title}>FamilyTree</h1>
         {!session && (
-          <span className={css.version} onClick={() => setShowLogin(true)}>
-            LOGIN
-          </span>
+          <div
+            style={{
+              display: "inline-flex",
+            }}
+          >
+            <span className={css.version} onClick={() => setShowRegister(true)}>
+              REGISTER
+            </span>
+            <span className={css.version} onClick={() => setShowLogin(true)}>
+              LOGIN
+            </span>
+          </div>
         )}
         {session && (
           <span className={css.version} onClick={async () => signOut()}>
@@ -195,7 +207,24 @@ export default React.memo(function App() {
           <Login onShow={setShowLogin} />
         </Box>
       </Modal>
-      {userRole === 1 && <SuperAdminAccess />}
+      <Modal
+        open={showRegister}
+        onClose={() => setShowRegister(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Register onShow={setShowRegister} />
+        </Box>
+      </Modal>
+      {userRole === 1 && session && <SuperAdminAccess />}
     </div>
   );
 });

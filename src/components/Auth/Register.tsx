@@ -7,10 +7,10 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import FamilyDataService, { supabase } from "../../services/FamilyDataService";
+import FamilyDataService from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
 
-interface LoginProps {
+interface RegisterProps {
   onShow: (open: boolean) => void;
 }
 
@@ -24,7 +24,7 @@ interface AlertType {
   type: "error" | "warning" | "info" | "success";
 }
 
-export const Login = ({ ...props }: LoginProps) => {
+export const Register = ({ ...props }: RegisterProps) => {
   const [alert, setAlert] = useState<AlertType | undefined>();
   const [selectedValues, setSelectedValues] = React.useState<FormSubmit>({
     email: "",
@@ -38,15 +38,20 @@ export const Login = ({ ...props }: LoginProps) => {
     }));
   };
 
-  const hideLogin = useCallback(() => props.onShow(false), [props]);
+  const hideRegister = useCallback(() => props.onShow(false), [props]);
 
-  const signInWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
+  const signUpWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    FamilyDataService.userSignIn(selectedValues)
-      .then((data) => {
+    const { email, password } = selectedValues;
+
+    FamilyDataService.userSignUp({
+      email,
+      password,
+    })
+      .then(() => {
         setAlert({
-          message: "Berhasil Login, silahkan menunggu...",
+          message: "Berhasil daftar, silahkan menunggu...",
           type: "success",
         });
 
@@ -56,7 +61,7 @@ export const Login = ({ ...props }: LoginProps) => {
       })
       .catch((e: Error) => {
         setAlert({
-          message: "Email atau password salah",
+          message: e.message,
           type: "error",
         });
       });
@@ -66,7 +71,7 @@ export const Login = ({ ...props }: LoginProps) => {
     <>
       <Box
         component="form"
-        onSubmit={signInWithEmail}
+        onSubmit={signUpWithEmail}
         noValidate
         sx={{
           width: "100%",
@@ -84,7 +89,7 @@ export const Login = ({ ...props }: LoginProps) => {
           sx={{
             float: "right",
           }}
-          onClick={hideLogin}
+          onClick={hideRegister}
         >
           <CloseIcon fontSize="inherit" />
         </IconButton>
@@ -110,7 +115,7 @@ export const Login = ({ ...props }: LoginProps) => {
           </Alert>
         )}
         <Typography component="h1" variant="h5">
-          Sign in
+          Register
         </Typography>
         <TextField
           margin="normal"
@@ -144,7 +149,7 @@ export const Login = ({ ...props }: LoginProps) => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Sign In
+          Sign Up
         </Button>
       </Box>
     </>

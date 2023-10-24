@@ -71,6 +71,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setOnProgress(true);
 
     // Access selected values for group1 and group2 in selectedValues object
     const {
@@ -85,9 +86,6 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     } = selectedValues;
 
     // validate data
-
-    setOnProgress(true);
-
     if (await validateData(selectedValues)) {
       // Perform your submit logic here
       if (relationType === "children") {
@@ -104,16 +102,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           { name, gender, birthday, address, job, photo },
           parents
         );
-        setSelectedValues({
-          parent: props.onAdd,
-          name: "",
-          gender: "male",
-          relationType: "spouse",
-          birthday: "",
-          address: "",
-          job: "",
-          photo: null,
-        });
+        closeHandler();
       } else if (relationType === "spouse") {
         // get data anak dari pasangan
         const childrenOfSpouseId = await FamilyDataService.getById(parent).then(
@@ -126,22 +115,12 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
               : [];
           }
         );
-        // // gabungkan id semua anak untuk pasangan baru
+        // gabungkan id semua anak untuk pasangan baru
         submitSpouseData(
           { name, gender, birthday, address, job, photo },
           parent,
           childrenOfSpouseId
         );
-        setSelectedValues({
-          parent: props.onAdd,
-          name: "",
-          gender: "male",
-          relationType: "spouse",
-          birthday: "",
-          address: "",
-          job: "",
-          photo: null,
-        });
       }
     }
   };
@@ -204,6 +183,9 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     });
     setShowAlert(true);
     setOnProgress(false);
+    setTimeout(() => {
+      closeHandler();
+    }, 1500);
   };
 
   // function untuk tambah data pasangan baru
@@ -271,6 +253,9 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     });
     setShowAlert(true);
     setOnProgress(false);
+    setTimeout(() => {
+      closeHandler();
+    }, 1500);
   };
 
   const validateData = async (value: FormSubmit) => {

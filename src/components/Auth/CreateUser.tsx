@@ -10,8 +10,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCallback, useState } from "react";
-import { AlertType, NewUserType } from "../../types/family.type";
-import FamilyDataService from "../../services/FamilyDataService";
+import { AlertType, AuthType } from "../../types/family.type"; 
 
 interface CreateUserProps {
   onShow: boolean;
@@ -25,7 +24,7 @@ export const CreateUser = ({ ...props }: CreateUserProps) => {
     setOnProgress(false);
     setAlert(undefined);
   }, [props]);
-  const [selectedValues, setSelectedValues] = useState<NewUserType>({
+  const [selectedValues, setSelectedValues] = useState<AuthType>({
     email: "",
     password: "",
   });
@@ -44,28 +43,28 @@ export const CreateUser = ({ ...props }: CreateUserProps) => {
     setOnProgress(true);
 
     if (validateData(selectedValues)) {
-      FamilyDataService.createNewUser(selectedValues)
-        .then((data) => {
-          setAlert({
-            message: "Berhasil membuat akun baru",
-            type: "success",
-          });
-          setSelectedValues({ email: "", password: "" });
-          handleChange("email", "");
-          handleChange("password", "");
-          setOnProgress(false);
-        })
-        .catch((e: Error) => {
-          setAlert({
-            message: e.message,
-            type: "error",
-          });
-          setOnProgress(false);
-        });
+      // FamilyDataService.createNewUser(selectedValues)
+      //   .then((data) => {
+      //     setAlert({
+      //       message: "Berhasil membuat akun baru",
+      //       type: "success",
+      //     });
+      //     setSelectedValues({ email: "", password: "" });
+      //     handleChange("email", "");
+      //     handleChange("password", "");
+      //     setOnProgress(false);
+      //   })
+      //   .catch((e: Error) => {
+      //     setAlert({
+      //       message: e.message,
+      //       type: "error",
+      //     });
+      //     setOnProgress(false);
+      //   });
     }
   };
 
-  const validateData = (value: NewUserType) => {
+  const validateData = (value: AuthType) => {
     const { email, password } = value;
 
     // email, password, relationType wajib diisi

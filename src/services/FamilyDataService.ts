@@ -1,4 +1,4 @@
-import FamilyData, { NewUserType, Node } from "../types/family.type"
+import FamilyData, { AuthType, Node } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -81,13 +81,13 @@ class FamilyDataService {
         const userId = dataAuth?.user?.id
         const { data: dataProfile, error: insertError } = await supabase.from('profile').insert({
           id: userId,
-          role_id: 2,
+          role_id: 1,
           name: "Administrator"
         })
         if (insertError) {
           throw insertError
         } else if (dataProfile) {
-          console.log(dataProfile)
+          return dataProfile
         }
       }
     }
@@ -103,12 +103,8 @@ class FamilyDataService {
     }
   }
 
-  async createNewUser({ email, password }: NewUserType) {
-    const { data: dataAuth, error: authError } = await supabase.auth.signUp({
-      email,
-      password
-    })
-
+  async userSignUp({ email, password }: AuthType) {
+    const { data: dataAuth, error: authError } = await supabase.auth.signUp({ email, password })
     if (authError) {
       throw authError
     } else if (dataAuth) {
@@ -126,30 +122,19 @@ class FamilyDataService {
     }
   }
 
-  // async getAndSetLocalStorage() {
-  //   const local = localStorage.getItem('family-tree') || '{}'
-  //   const expired = JSON.parse(local).expired_at
-  //   const date = new Date();
+  async userSignIn({ email, password }: AuthType) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  //   if (expired === "" || expired < date.valueOf()) {
-  //     const getData = await this.getAll()
-  //     const compactData = JSON.stringify({
-  //       "tree": getData,
-  //       "expired_at": date.setDate(date.getDate() + 1).valueOf()
-  //     })
-  //     localStorage.setItem('family-tree', compactData)
-  //     return JSON.parse(compactData)
-  //   }
-  // }
+    if (error) {
+      throw error
+    } else if (data) {
+      return data
+    }
+  }
 
-  // resyncData() {
-  //   const data = JSON.parse(localStorage.getItem('family-tree') || '{}')
-
-  //   localStorage.setItem('family-tree', JSON.stringify({
-  //     "tree": data.tree,
-  //     "expired_at": ""
-  //   }))
-  // }
 
   //STORAGE
   async uploadImage(file: File) {

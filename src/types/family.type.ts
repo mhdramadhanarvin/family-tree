@@ -30,7 +30,7 @@ export interface Node {
   photo?: string;
 } 
 
-export interface NewUserType {
+export interface AuthType {
   email: string;
   password: string;
 }

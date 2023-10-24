@@ -5,8 +5,6 @@ specifiers:
   '@emotion/styled': ^11.11.0
   '@mui/icons-material': ^5.14.12
   '@mui/material': ^5.14.12
-  '@supabase/auth-ui-react': ^0.4.6
-  '@supabase/auth-ui-shared': ^0.1.8
   '@supabase/supabase-js': ^2.38.2
   '@types/classnames': 2.3.1
   '@types/react': 18.0.15
@@ -31,8 +29,6 @@ dependencies:
   '@emotion/styled': 11.11.0_62t24aw4a7o453fy7qg53657wq
   '@mui/icons-material': 5.14.12_phda64ycyyuxx7xpppa44n5mqq
   '@mui/material': 5.14.12_wsxionarpbatd6wtivs5imqrlu
-  '@supabase/auth-ui-react': 0.4.6_rgudrdz3awkjoj33x7lc3ayen4
-  '@supabase/auth-ui-shared': 0.1.8_rgudrdz3awkjoj33x7lc3ayen4
   '@supabase/supabase-js': 2.38.2
   classnames: 2.3.1
   firebase: 10.4.0
@@ -3000,39 +2996,14 @@ packages:
       '@sinonjs/commons': 1.8.6
     dev: true
 
-  /@stitches/core/1.2.8:
-    resolution: {integrity: sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==}
-    dev: false
-
-  /@supabase/auth-ui-react/0.4.6_rgudrdz3awkjoj33x7lc3ayen4:
-    resolution: {integrity: sha512-uvjcH/K0rvFKUE5Uam5JI6IGXUWSv55GTYcVRRQFEwfav2sT4hzBh6A0gkX9gEZEprhSA9S5Pp5+TzkCAKgcbg==}
-    peerDependencies:
-      '@supabase/supabase-js': ^2.21.0
-    dependencies:
-      '@stitches/core': 1.2.8
-      '@supabase/auth-ui-shared': 0.1.8_rgudrdz3awkjoj33x7lc3ayen4
-      '@supabase/supabase-js': 2.38.2
-      prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@supabase/auth-ui-shared/0.1.8_rgudrdz3awkjoj33x7lc3ayen4:
-    resolution: {integrity: sha512-ouQ0DjKcEFg+0gZigFIEgu01V3e6riGZPzgVD0MJsCBNsMsiDT74+GgCEIElMUpTGkwSja3xLwdFRFgMNFKcjg==}
-    peerDependencies:
-      '@supabase/supabase-js': ^2.21.0
-    dependencies:
-      '@supabase/supabase-js': 2.38.2
-    dev: false
-
   /@supabase/functions-js/2.1.5:
     resolution: {integrity: sha512-BNzC5XhCzzCaggJ8s53DP+WeHHGT/NfTsx2wUSSGKR2/ikLFQTBCDzMvGz/PxYMqRko/LwncQtKXGOYp1PkPaw==}
     dependencies:
       '@supabase/node-fetch': 2.6.14
     dev: false
 
-  /@supabase/gotrue-js/2.56.0:
-    resolution: {integrity: sha512-UJEPWls3fN2TfqiDWP/b78Kby4VjPcXnMGmF2lfzP5IDS4xr1+kxBugGmrQXxX8mxBsmvmW1ATahzyBUU9FZyQ==}
+  /@supabase/gotrue-js/2.57.0:
+    resolution: {integrity: sha512-/CcAW40aPKgp9/w9WgXVUQFg1AOdvFR687ONOMjASPBuC6FsNbKlcXp4pc+rwKNtxyxDkBbR+x7zj/8g00r/Og==}
     dependencies:
       '@supabase/node-fetch': 2.6.14
     dev: false
@@ -3071,7 +3042,7 @@ packages:
     resolution: {integrity: sha512-yOCi94oO5WVUBhQ890BvtT7J3p8spP47PMhn22YldIcDLEQWE6N6X2JzfWCLHktXw+oCYUJfQBuqYhyLHAKb0w==}
     dependencies:
       '@supabase/functions-js': 2.1.5
-      '@supabase/gotrue-js': 2.56.0
+      '@supabase/gotrue-js': 2.57.0
       '@supabase/node-fetch': 2.6.14
       '@supabase/postgrest-js': 1.8.5
       '@supabase/realtime-js': 2.8.1
