@@ -3,23 +3,23 @@ import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
-import { AccountTree, PeopleAlt, PersonAdd } from "@mui/icons-material"; 
-import { CreateUser } from "../Auth/CreateUser";
+import { AccountTree, PeopleAlt } from "@mui/icons-material";  
+import { ListUsers } from "../Auth/ListUsers";
 
 const actions = [ 
-  { id: 2, icon: <PeopleAlt />, name: "Daftar Pengguna" },
-  { id: 3, icon: <AccountTree />, name: "Keluarga" },
+  { id: 1, icon: <PeopleAlt />, name: "Daftar Pengguna" },
+  { id: 2, icon: <AccountTree />, name: "Keluarga" },
 ];
 
 export const SuperAdminAccess = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [showCreateUser, setShowCreateUser] = React.useState<boolean>(false)
+  const [showListUsers, setShowListUsers] = React.useState<boolean>(false)
 
   const handleClick = (paramId: number) => {
     if (paramId === 1) {
-      setShowCreateUser(true)
+      setShowListUsers(true)
     }
   };
 
@@ -44,7 +44,7 @@ export const SuperAdminAccess = () => {
           ))}
         </SpeedDial>
       </Box>
-      <CreateUser onShow={showCreateUser} setShow={setShowCreateUser}/>
+      <ListUsers onShow={showListUsers} setShow={setShowListUsers}/>
     </>
   );
 };

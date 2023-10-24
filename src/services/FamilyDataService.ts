@@ -135,6 +135,11 @@ class FamilyDataService {
     }
   }
 
+  async getAllUser() {
+    const { data: { users }, error } = await supabase.auth.admin.listUsers()
+    return { users, error }
+  }
+
 
   //STORAGE
   async uploadImage(file: File) {
