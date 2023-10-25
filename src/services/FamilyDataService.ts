@@ -1,10 +1,11 @@
-import FamilyData, { AuthType, Node } from "../types/family.type"
+import FamilyData, { AuthType, Node, ParentDataType, RelationType, statusTemporaryFamily } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
 import { v4 as uuidv4 } from "uuid";
 
 export const supabase = createClient(process.env.REACT_APP_SUPABASE_HOST || "", process.env.REACT_APP_SUPABASE_KEY || "");
 
 const tableName = 'family'
+const tableNameTemporary = 'temporary_family'
 
 class FamilyDataService {
   async getAll(): Promise<Node[] | any> {
@@ -140,6 +141,22 @@ class FamilyDataService {
     return { users, error }
   }
 
+  // TEMPORARY FAMILY
+  async storeTemporaryFamilyData(parentData: ParentDataType, relation_type: RelationType, familyData: FamilyData) {
+    const { data, error } = await supabase.from(tableNameTemporary).insert({
+      parent_id: parentData.parentId,
+      parent_name: parentData.parentName,
+      relation_type,
+      data: familyData,
+      status: statusTemporaryFamily.pending
+    })
+
+    if (error) {
+      throw error
+    } else if (data) {
+      return true
+    }
+  }
 
   //STORAGE
   async uploadImage(file: File) {

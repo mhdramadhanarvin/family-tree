@@ -14,11 +14,12 @@ import { v4 as uuidv4 } from "uuid";
 import { Alert, CircularProgress, Snackbar } from "@mui/material";
 import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
-import { AlertType } from "../../types/family.type";
+import { AlertType, RelationType } from "../../types/family.type";
 
 interface AddFamilyProps {
   onAdd: string | undefined;
   onShow: (open: boolean) => void;
+  userRole: number | undefined;
 }
 
 interface FormSubmit {
@@ -44,30 +45,25 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     photo: null,
   });
   const [alert, setAlert] = useState<AlertType | undefined>();
-  const [showAlert, setShowAlert] = useState<boolean>(false);
-
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [toggleImage, setToggleImage] = useState<boolean>(false);
+  const [onProgress, setOnProgress] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<File | undefined>(
+    undefined
+  );
+  const closeHandler = useCallback(() => props.onShow(false), [props]);
   const handleChange = (group: string, value: any) => {
     setSelectedValues((prevSelectedValues) => ({
       ...prevSelectedValues,
       [group]: value,
     }));
   };
-
-  const closeHandler = useCallback(() => props.onShow(false), [props]);
-  const [selectedImage, setSelectedImage] = useState<File | undefined>(
-    undefined
-  );
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [toggleImage, setToggleImage] = useState<boolean>(false);
-
   useEffect(() => {
     if (selectedImage) {
       setImageUrl(URL.createObjectURL(selectedImage));
       handleChange("photo", selectedImage);
     }
   }, [selectedImage]);
-
-  const [onProgress, setOnProgress] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -97,12 +93,10 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         );
         // gabungkan id suami dan istri untuk data parent
         const parents: string[] = [parent].concat(spouseOfParentId);
-
         submitChildrenData(
           { name, gender, birthday, address, job, photo },
           parents
         );
-        closeHandler();
       } else if (relationType === "spouse") {
         // get data anak dari pasangan
         const childrenOfSpouseId = await FamilyDataService.getById(parent).then(
@@ -175,17 +169,34 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     );
 
     // // Add data in children and parents updated
-    await FamilyDataService.update(getAllData);
+    if (props.userRole === 1) {
+      await FamilyDataService.update(getAllData);
 
-    setAlert({
-      message: "Berhasil menambahkan keluarga!",
-      type: "success",
-    });
-    setShowAlert(true);
+      setAlert({
+        message: "Berhasil menambahkan keluarga!",
+        type: "success",
+      });
+    } else {
+      const getDataRealParent = await FamilyDataService.getById(parents[0].id);
+      await FamilyDataService.storeTemporaryFamilyData(
+        {
+          parentId: getDataRealParent.id,
+          parentName: getDataRealParent.name,
+        },
+        RelationType.children,
+        newData
+      );
+      setAlert({
+        message:
+          "Berhasil mengajukan penambahan keluarga, silahkan menunggu validasi!",
+        type: "success",
+      });
+    }
+
     setOnProgress(false);
     setTimeout(() => {
       closeHandler();
-    }, 1500);
+    }, 2000);
   };
 
   // function untuk tambah data pasangan baru
@@ -244,18 +255,34 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     const indexData = await FamilyDataService.getIndexById(parentId);
     getAllData[indexData] = await getDataParent;
 
-    // simpan semua struktur
-    await FamilyDataService.update(getAllData);
+    if (props.userRole === 1) {
+      // simpan semua struktur
+      await FamilyDataService.update(getAllData);
 
-    setAlert({
-      message: "Berhasil menambahkan keluarga!",
-      type: "success",
-    });
-    setShowAlert(true);
+      setAlert({
+        message: "Berhasil menambahkan keluarga!",
+        type: "success",
+      });
+    } else {
+      await FamilyDataService.storeTemporaryFamilyData(
+        {
+          parentId: getDataParent.id,
+          parentName: getDataParent.name,
+        },
+        RelationType.spouse,
+        newData
+      );
+      setAlert({
+        message:
+          "Berhasil mengajukan penambahan keluarga, silahkan menunggu validasi!",
+        type: "success",
+      });
+    }
+
     setOnProgress(false);
     setTimeout(() => {
       closeHandler();
-    }, 1500);
+    }, 2000);
   };
 
   const validateData = async (value: FormSubmit) => {
@@ -264,22 +291,18 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     let statusValidation = true;
     if (!name) {
       setAlert({ message: "Nama wajib diisi!", type: "error" });
-      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     } else if (!gender) {
       setAlert({ message: "Jenis kelamin wajib diisi!", type: "error" });
-      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     } else if (!parent) {
       setAlert({ message: "Relasi wajib diisi!", type: "error" });
-      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     } else if (!relationType) {
       setAlert({ message: "Hubungan wajib diisi!", type: "error" });
-      setShowAlert(true);
       setOnProgress(false);
       return (statusValidation = false);
     }
@@ -291,7 +314,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     //       message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",
     //       type: "error",
     //     });
-    //     setShowAlert(true);
+    //     setalert ?? false(true);
     //     setOnProgress(false);
     //     return (statusValidation = false);
     //   }
@@ -315,12 +338,12 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
               vertical: "top",
               horizontal: "right",
             }}
-            open={showAlert}
+            open={alert ? true : false}
             autoHideDuration={6000}
-            onClose={() => setShowAlert(false)}
+            onClose={() => setAlert(undefined)}
           >
             <Alert
-              onClose={() => setShowAlert(false)}
+              onClose={() => setAlert(undefined)}
               severity={alert.type}
               variant="filled"
               sx={{ width: "100%" }}
@@ -330,10 +353,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           </Snackbar>
         )}
         <header className={css.header}>
-          <h2 className={css.title} onClick={() => setShowAlert(true)}>
-            {" "}
-            Tambah Keluarga{" "}
-          </h2>
+          <h2 className={css.title}> Tambah Keluarga </h2>
           <button className={css.close} onClick={closeHandler}>
             &#10005;
           </button>

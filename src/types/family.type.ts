@@ -28,7 +28,7 @@ export interface Node {
   address?: string;
   job?: string;
   photo?: string;
-} 
+}
 
 export interface AuthType {
   email: string;
@@ -38,4 +38,20 @@ export interface AuthType {
 export interface AlertType {
   message: string;
   type: "error" | "warning" | "info" | "success";
+}
+
+export interface ParentDataType {
+  parentId: string;
+  parentName: string
+}
+
+export enum RelationType {
+  spouse = "spouse",
+  children = "children"
+}
+
+export enum statusTemporaryFamily {
+  pending = 1,
+  approve = 2,
+  rejected = 0
 }

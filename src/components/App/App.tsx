@@ -32,6 +32,7 @@ export default React.memo(function App() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [userRole, setUserRole] = useState<number | undefined>(undefined);
+  const [alert, setAlert] = useState<AlertType | undefined>(undefined);
 
   interface AlertType {
     title: string;
@@ -42,7 +43,6 @@ export default React.memo(function App() {
   useEffect(() => {
     FamilyDataService.getAll()
       .then((result: Node[]) => {
-        setAlert(undefined);
         setRootId(result[0].id);
         setNodes(result);
       })
@@ -75,8 +75,10 @@ export default React.memo(function App() {
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, [nodes, rootId, session]);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [nodes, rootId]);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),
@@ -87,8 +89,6 @@ export default React.memo(function App() {
     () => (nodes ? nodes.find((item) => item.id === selectId) : null),
     [nodes, selectId]
   );
-
-  const [alert, setAlert] = useState<AlertType | undefined>(undefined);
 
   const seeDetailNode = (selectId: string) => {
     setSelectId(selectId);
@@ -187,7 +187,11 @@ export default React.memo(function App() {
       )}
 
       {addFamily && session && (
-        <AddFamily onAdd={addFamilyId} onShow={setAddFamily} />
+        <AddFamily
+          onAdd={addFamilyId}
+          onShow={setAddFamily}
+          userRole={userRole}
+        />
       )}
 
       <Modal

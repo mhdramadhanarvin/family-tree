@@ -1,16 +1,6 @@
-import {
-  Alert,
-  Box,
-  Button,
-  IconButton,
-  TextField,
-  Typography,
-  Modal,
-  CircularProgress,
-} from "@mui/material";
+import { Box, IconButton, Typography, Modal } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useCallback, useEffect, useState } from "react";
-import { AlertType, AuthType } from "../../types/family.type";
+import { useCallback, useEffect } from "react";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import FamilyDataService from "../../services/FamilyDataService";
 

@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import FamilyDataService, { supabase } from "../../services/FamilyDataService";
+import FamilyDataService from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
 
 interface LoginProps {
