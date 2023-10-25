@@ -136,9 +136,14 @@ class FamilyDataService {
     }
   }
 
-  async getAllUser() {
-    const { data: { users }, error } = await supabase.auth.admin.listUsers()
-    return { users, error }
+  async getAllListRequestFamily() {
+    const { data, error } = await supabase.from(tableNameTemporary).select('*');
+
+    if (error) {
+      throw error
+    } else if (data) {
+      return data
+    }
   }
 
   // TEMPORARY FAMILY

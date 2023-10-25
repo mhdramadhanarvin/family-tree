@@ -55,3 +55,13 @@ export enum statusTemporaryFamily {
   approve = 2,
   rejected = 0
 }
+
+export interface TemporaryFamilyType {
+  id: number;
+  parent_id: string;
+  parent_name: string;
+  relation_type: keyof RelationType;
+  data: object;
+  status: typeof statusTemporaryFamily;
+  created_at: string
+}
