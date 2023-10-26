@@ -53,7 +53,7 @@ export enum RelationType {
 export enum statusTemporaryFamily {
   pending = 1,
   approve = 2,
-  rejected = 0
+  rejected = 3
 }
 
 export interface TemporaryFamilyType {

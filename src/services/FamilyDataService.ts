@@ -146,7 +146,7 @@ class FamilyDataService {
     }
   }
 
-  // TEMPORARY FAMILY
+  // TEMPORARY FAMILY / REQUEST FAMILY
   async storeTemporaryFamilyData(parentData: ParentDataType, relation_type: RelationType, familyData: FamilyData) {
     const { data, error } = await supabase.from(tableNameTemporary).insert({
       parent_id: parentData.parentId,
@@ -155,6 +155,19 @@ class FamilyDataService {
       data: familyData,
       status: statusTemporaryFamily.pending
     })
+
+    if (error) {
+      throw error
+    } else if (data) {
+      return true
+    }
+  }
+
+  async updateRequestFamily(requestId: number, status: statusTemporaryFamily) {
+    const { data, error } = await supabase
+      .from(tableNameTemporary)
+      .update({ status })
+      .eq('id', requestId)
 
     if (error) {
       throw error
