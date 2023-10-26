@@ -11,7 +11,11 @@ const actions = [
   { id: 2, icon: <AccountTree />, name: "Keluarga" },
 ];
 
-export const SuperAdminAccess = () => {
+interface SuperAdminAccessProps {
+  onView: (parentId: string) => void;
+}
+
+export const SuperAdminAccess = ({ ...props }: SuperAdminAccessProps) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -47,6 +51,7 @@ export const SuperAdminAccess = () => {
       <ListRequestFamily
         onShow={showListRequest}
         setShow={setShowListRequest}
+        onView={props.onView}
       />
     </>
   );

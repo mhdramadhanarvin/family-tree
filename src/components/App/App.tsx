@@ -228,7 +228,7 @@ export default React.memo(function App() {
           <Register onShow={setShowRegister} />
         </Box>
       </Modal>
-      {userRole === 1 && session && <SuperAdminAccess />}
+      {userRole === 1 && session && <SuperAdminAccess onView={seeDetailNode} />}
     </div>
   );
 });

@@ -4,11 +4,12 @@ import { useCallback, useEffect, useState } from "react";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import FamilyDataService from "../../services/FamilyDataService";
 import { TemporaryFamilyType } from "../../types/family.type";
-import { Check, Clear, EditLocation, Visibility } from "@mui/icons-material";
+import { Check, Visibility } from "@mui/icons-material";
 
 interface ListRequestFamilyProps {
   onShow: boolean;
   setShow: (open: boolean) => void;
+  onView: (parentId: string) => void
 }
 
 export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
@@ -43,9 +44,11 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       field: "parent",
       headerName: "Parent",
       description: "This column has a value getter and is not sortable.",
-      width: 160,
+      width: 300,
       valueGetter: (params: GridValueGetterParams) =>
         `${params.row.parent_name || ""}`,
+      headerAlign: "center",
+      align: "center"
     },
     {
       field: "relation_type",
@@ -53,6 +56,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       width: 130,
       renderCell: ({ row }) =>
         row.relation_type === "children" ? "ANAK" : "SUAMI/ISTRI",
+      headerAlign: "center",
+      align: "center"
     },
     {
       field: "status",
@@ -66,6 +71,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
         ) : (
           <Chip label="DITERIMA" color="success" />
         ),
+      headerAlign: "center",
+      align: "center"
     },
     {
       field: "action",
@@ -79,7 +86,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
               aria-label="detail"
               // disabled={}
               onClick={() => {
-                handleClick("detail", row.id);
+                props.onView(row.parent_id);
               }}
             >
               <Visibility />
@@ -105,8 +112,10 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
           </>
         );
       },
+      headerAlign: "center",
+      align: "center"
     },
-  ]; 
+  ];
 
   const closeHandler = useCallback(() => {
     props.setShow(false);
