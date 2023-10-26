@@ -5,14 +5,15 @@ import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import { AccountTree, PeopleAlt } from "@mui/icons-material";
 import { ListRequestFamily } from "../Auth/ListRequestFamily";
+import { Node } from "../../types/family.type";
 
 const actions = [
-  { id: 1, icon: <PeopleAlt />, name: "Daftar Pengguna" },
+  // { id: 1, icon: <PeopleAlt />, name: "Daftar Pengguna" },
   { id: 2, icon: <AccountTree />, name: "Keluarga" },
 ];
 
 interface SuperAdminAccessProps {
-  onView: (parentId: string) => void;
+  detailNode: (node: Node[]) => void;
 }
 
 export const SuperAdminAccess = ({ ...props }: SuperAdminAccessProps) => {
@@ -51,7 +52,7 @@ export const SuperAdminAccess = ({ ...props }: SuperAdminAccessProps) => {
       <ListRequestFamily
         onShow={showListRequest}
         setShow={setShowListRequest}
-        onView={props.onView}
+        onDetailNode={props.detailNode}
       />
     </>
   );

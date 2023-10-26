@@ -24,6 +24,7 @@ export const FamilyNode = React.memo(
             css[node.gender],
             isRoot && css.isRoot,
             isHover && css.isHover,
+            css[node.placeholder]
           )}
           onClick={clickHandler}
         >

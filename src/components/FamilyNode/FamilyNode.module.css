@@ -6,40 +6,44 @@
   /* justify-content: space-around; */
   align-items: center;
   justify-content: center;
-  align-content: stretch; 
+  align-content: stretch;
 }
 
-.inner { 
+.inner {
   /* flex: inherit; */
   /* flex-basis: 200px; */
   align-items: center;
   justify-content: center;
   /* Todo : border membuat tumpukan */
-  /* border: 1pt solid rgba(0, 0, 0, .2); */ 
+  /* border: 1pt solid rgba(0, 0, 0, .2); */
   /* border-radius: 10px 0; */
   font-weight: bold;
   overflow: hidden;
   cursor: pointer;
   text-align: center;
-  padding: 7px; 
+  padding: 7px;
 }
 
 .male {
-  background: #4A9E00;
+  background: #4a9e00;
   /* background: #90CAF9; */
 }
 
 .female {
-  background: #FBCC10;
+  background: #fbcc10;
   /* background: #F48FB1; */
 }
 
+.true {
+  background: #ccc;
+}
+
 .isRoot {
-  border-color: rgba(0, 0, 0, .4);
+  border-color: rgba(0, 0, 0, 0.4);
 }
 
 .isHover {
-  border-color: rgba(0, 0, 0, .8);
+  border-color: rgba(0, 0, 0, 0.8);
 }
 
 .id {
@@ -52,7 +56,7 @@
   right: 14px;
   width: 14px;
   height: 10px;
-  border: 1px solid rgba(0, 0, 0, .2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px 0;
   background: #fff;
   cursor: pointer;

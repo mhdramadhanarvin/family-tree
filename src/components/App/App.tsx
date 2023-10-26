@@ -33,6 +33,9 @@ export default React.memo(function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [userRole, setUserRole] = useState<number | undefined>(undefined);
   const [alert, setAlert] = useState<AlertType | undefined>(undefined);
+  const [temporaryNode, setTemporaryNode] = useState<Node[] | undefined>(
+    undefined
+  );
 
   interface AlertType {
     title: string;
@@ -41,18 +44,23 @@ export default React.memo(function App() {
   }
 
   useEffect(() => {
-    FamilyDataService.getAll()
-      .then((result: Node[]) => {
-        setRootId(result[0].id);
-        setNodes(result);
-      })
-      .catch((e: Error) => {
-        setAlert({
-          title: "Terjadi kesalahan",
-          message: e.message + ". Please refresh..",
-          type: "error",
+    if (temporaryNode) {
+      setRootId(temporaryNode[0].id);
+      setNodes(temporaryNode);
+    } else {
+      FamilyDataService.getAll()
+        .then((result: Node[]) => {
+          setRootId(result[0].id);
+          setNodes(result);
+        })
+        .catch((e: Error) => {
+          setAlert({
+            title: "Terjadi kesalahan",
+            message: e.message + ". Please refresh..",
+            type: "error",
+          });
         });
-      });
+    }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -78,7 +86,7 @@ export default React.memo(function App() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [nodes, rootId]);
+  }, [nodes, rootId, temporaryNode]);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),
@@ -228,7 +236,9 @@ export default React.memo(function App() {
           <Register onShow={setShowRegister} />
         </Box>
       </Modal>
-      {userRole === 1 && session && <SuperAdminAccess onView={seeDetailNode} />}
+      {userRole === 1 && session && (
+        <SuperAdminAccess detailNode={setTemporaryNode} />
+      )}
     </div>
   );
 });

@@ -13,16 +13,19 @@ import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
 import FamilyDataService from "../../services/FamilyDataService";
 import FamilyData, {
   AlertType,
-  RelationType, 
+  Node,
+  RelationType,
   statusTemporaryFamily,
 } from "../../types/family.type";
 import { Check, Visibility } from "@mui/icons-material";
 import { RelType } from "relatives-tree/lib/types";
+import classNames from "classnames";
+import css from "./ListRequestFamily.module.css";
 
 interface ListRequestFamilyProps {
   onShow: boolean;
   setShow: (open: boolean) => void;
-  onView: (parentId: string) => void;
+  onDetailNode: (node: Node[] | any) => void;
 }
 
 export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
@@ -37,7 +40,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     },
   ]);
   const [alert, setAlert] = useState<AlertType | undefined>(undefined);
-  const [view, setView] = useState<string>();
+  const [seeDetail, setSeeDetail] = useState<string>();
 
   const approveRequest = async (
     requestId: number,
@@ -45,17 +48,31 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     relationType: RelationType,
     data: FamilyData
   ) => {
+    let resultData: FamilyData[] = [
+      {
+        id: "user1",
+        name: "Nama",
+        gender: "male",
+        parents: [],
+        siblings: [],
+        spouses: [],
+        children: [],
+      },
+    ];
     if (relationType === RelationType.children) {
-      await storeDataChildren(data, parentId);
+      resultData = await storeDataChildren(data, parentId);
     } else if (relationType === RelationType.spouse) {
-      await storeDataSpouse(data, parentId);
+      resultData = await storeDataSpouse(data, parentId);
     }
+
+    await FamilyDataService.update(resultData);
 
     FamilyDataService.updateRequestFamily(
       requestId,
       statusTemporaryFamily.approve
     )
       .then(() => {
+        props.onDetailNode(resultData);
         setAlert({ message: "Permintaan berhasil disetujui", type: "success" });
       })
       .catch((e: Error) => {
@@ -69,6 +86,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       statusTemporaryFamily.rejected
     )
       .then(() => {
+        props.onDetailNode(undefined);
+        setSeeDetail('')
         setAlert({ message: "Permintaan berhasil ditolak", type: "success" });
       })
       .catch((e: Error) => {
@@ -76,9 +95,15 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       });
   };
 
-  const storeDataChildren = async (newData: FamilyData, parentId: string) => {
+  const storeDataChildren = async (
+    newData: FamilyData,
+    parentId: string,
+    temporaryData: boolean = false
+  ) => {
     const getAllData = await FamilyDataService.getAll();
     const lengthData = await FamilyDataService.getLengthData();
+
+    newData.placeholder = temporaryData;
 
     getAllData[lengthData] = newData;
 
@@ -104,15 +129,18 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
 
         const indexData = await FamilyDataService.getIndexById(parentData);
         getAllData[indexData] = await getDataParent;
-        console.log(indexData);
         return getAllData;
       })
     );
 
-    await FamilyDataService.update(getAllData);
+    return getAllData;
   };
 
-  const storeDataSpouse = async (newData: FamilyData, parentId: string) => {
+  const storeDataSpouse = async (
+    newData: FamilyData,
+    parentId: string,
+    temporaryData: boolean = false
+  ) => {
     const childrenOfSpouseId = await FamilyDataService.getById(parentId).then(
       (data) => {
         // kalau dia punya anak dan belum punya pasangan
@@ -136,6 +164,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     const getAllData = await FamilyDataService.getAll();
     const lengthData = await FamilyDataService.getLengthData();
 
+    newData.placeholder = temporaryData;
+
     // masukkan data pasangan baru dan anaknya
     getAllData[lengthData] = newData;
 
@@ -151,7 +181,26 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     const indexData = await FamilyDataService.getIndexById(parentId);
     getAllData[indexData] = await getDataParent;
 
-    await FamilyDataService.update(getAllData);
+    // await FamilyDataService.update(getAllData);
+    return getAllData;
+  };
+
+  const previewNode = async (
+    requestId: number,
+    parentId: string,
+    relationType: RelationType,
+    data: FamilyData
+  ) => {
+    props.setShow(false);
+
+    let resultData;
+    if (relationType === RelationType.children) {
+      resultData = await storeDataChildren(data, parentId, true);
+    } else if (relationType === RelationType.spouse) {
+      resultData = await storeDataSpouse(data, parentId, true);
+    }
+
+    props.onDetailNode(resultData);
   };
 
   useEffect(() => {
@@ -210,13 +259,14 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
           <>
             <IconButton
               aria-label="detail"
-              // disabled={row.status !== 1}
-              sx={{
-                color: "blue",
-              }}
+              disabled={row.status !== 1}
+              className={classNames(css.selectedButton)}
               onClick={() => {
-                props.onView(row.parent_id);
-                props.setShow(false);
+                previewNode(row.id, row.parent_id, row.relation_type, row.data);
+                setSeeDetail(row.id);
+              }}
+              sx={{
+                color: seeDetail === row.id ? "blue" : "",
               }}
             >
               <Visibility />
