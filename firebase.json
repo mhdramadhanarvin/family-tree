@@ -1,0 +1,11 @@
+{
+  "hosting": {
+    "site": "familytree-1de04",
+    "public": "build",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
