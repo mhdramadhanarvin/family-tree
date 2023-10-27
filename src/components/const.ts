@@ -29,4 +29,6 @@ export const DEFAULT_SOURCE = Object.keys(SOURCES)[0];
 
 export const URL_LABEL = 'URL (Gist, Paste.bin, ...)';
 
-FamilyDataService.createSuperadminUser().then(() => { })
+const familyDataService = new FamilyDataService()
+
+familyDataService.createSuperadminUser().then(() => { })

@@ -16,6 +16,8 @@ import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
 import { AlertType, RelationType } from "../../types/family.type";
 
+const familyDataService = new FamilyDataService()
+
 interface AddFamilyProps {
   onAdd: string | undefined;
   onShow: (open: boolean) => void;
@@ -86,7 +88,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       // Perform your submit logic here
       if (relationType === "children") {
         //get data husband in parent (wife)
-        const spouseOfParentId = await FamilyDataService.getById(parent).then(
+        const spouseOfParentId = await familyDataService.getById(parent).then(
           (data) => {
             return data.spouses.length > 0 ? [data.spouses[0].id] : [];
           }
@@ -99,7 +101,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         );
       } else if (relationType === "spouse") {
         // get data anak dari pasangan
-        const childrenOfSpouseId = await FamilyDataService.getById(parent).then(
+        const childrenOfSpouseId = await familyDataService.getById(parent).then(
           (data) => {
             // kalau dia punya anak dan belum punya pasangan
             // ambil data anaknya
@@ -130,7 +132,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     });
 
     const uploadPhoto =
-      photo !== null ? await FamilyDataService.uploadImage(photo) : null;
+      photo !== null ? await familyDataService.uploadImage(photo) : null;
 
     const newData: any = {
       id: uuidv4(),
@@ -146,14 +148,14 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       spouses: [],
     };
 
-    const getAllData = await FamilyDataService.getAll();
-    const lengthData = await FamilyDataService.getLengthData();
+    const getAllData = await familyDataService.getAll();
+    const lengthData = await familyDataService.getLengthData();
 
     getAllData[lengthData] = newData;
 
     await Promise.all(
       parentId.map(async (parent) => {
-        const getDataParent = await FamilyDataService.getById(parent);
+        const getDataParent = await familyDataService.getById(parent);
         getDataParent.children = [
           ...getDataParent.children,
           {
@@ -162,7 +164,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           },
         ];
 
-        const indexData = await FamilyDataService.getIndexById(parent);
+        const indexData = await familyDataService.getIndexById(parent);
         getAllData[indexData] = await getDataParent;
         return getAllData;
       })
@@ -170,15 +172,15 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
 
     // // Add data in children and parents updated
     if (props.userRole === 1) {
-      await FamilyDataService.update(getAllData);
+      await familyDataService.update(getAllData);
 
       setAlert({
         message: "Berhasil menambahkan keluarga!",
         type: "success",
       });
     } else {
-      const getDataRealParent = await FamilyDataService.getById(parents[0].id);
-      await FamilyDataService.storeTemporaryFamilyData(
+      const getDataRealParent = await familyDataService.getById(parents[0].id);
+      await familyDataService.storeTemporaryFamilyData(
         {
           parentId: getDataRealParent.id,
           parentName: getDataRealParent.name,
@@ -216,7 +218,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     });
 
     const uploadPhoto =
-      photo !== null ? await FamilyDataService.uploadImage(photo) : null;
+      photo !== null ? await familyDataService.uploadImage(photo) : null;
 
     const newData: any = {
       id: uuidv4(),
@@ -237,14 +239,14 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       ],
     };
 
-    const getAllData = await FamilyDataService.getAll();
-    const lengthData = await FamilyDataService.getLengthData();
+    const getAllData = await familyDataService.getAll();
+    const lengthData = await familyDataService.getLengthData();
 
     // masukkan data pasangan baru dan anaknya
     getAllData[lengthData] = newData;
 
     // tambahkan data pasangan baru sebagai pasangan di parent data
-    const getDataParent = await FamilyDataService.getById(parentId);
+    const getDataParent = await familyDataService.getById(parentId);
     getDataParent.spouses = [
       ...getDataParent.spouses,
       {
@@ -252,19 +254,19 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         type: RelType.married,
       },
     ];
-    const indexData = await FamilyDataService.getIndexById(parentId);
+    const indexData = await familyDataService.getIndexById(parentId);
     getAllData[indexData] = await getDataParent;
 
     if (props.userRole === 1) {
       // simpan semua struktur
-      await FamilyDataService.update(getAllData);
+      await familyDataService.update(getAllData);
 
       setAlert({
         message: "Berhasil menambahkan keluarga!",
         type: "success",
       });
     } else {
-      await FamilyDataService.storeTemporaryFamilyData(
+      await familyDataService.storeTemporaryFamilyData(
         {
           parentId: getDataParent.id,
           parentName: getDataParent.name,
@@ -308,7 +310,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     }
 
     // cek kalau dia laki-laki dan punya pasangan harus tambahkan dari pasangan perempuan
-    // await FamilyDataService.getById(parent).then((parentData: any) => {
+    // await familyDataService.getById(parent).then((parentData: any) => {
     //   if (parentData.spouses.length > 1 && relationType === "children") {
     //     setAlert({
     //       message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",

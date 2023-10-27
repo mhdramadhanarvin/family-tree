@@ -195,4 +195,4 @@ class FamilyDataService {
   }
 }
 
-export default new FamilyDataService();
+export default FamilyDataService;

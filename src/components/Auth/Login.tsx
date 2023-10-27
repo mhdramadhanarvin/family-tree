@@ -10,6 +10,8 @@ import React, { useCallback, useState } from "react";
 import FamilyDataService from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
 
+const familyDataService = new FamilyDataService()
+
 interface LoginProps {
   onShow: (open: boolean) => void;
 }
@@ -43,7 +45,7 @@ export const Login = ({ ...props }: LoginProps) => {
   const signInWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    FamilyDataService.userSignIn(selectedValues)
+    familyDataService.userSignIn(selectedValues)
       .then((data) => {
         setAlert({
           message: "Berhasil Login, silahkan menunggu...",

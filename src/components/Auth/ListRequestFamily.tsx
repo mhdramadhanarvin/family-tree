@@ -28,6 +28,8 @@ interface ListRequestFamilyProps {
   onDetailNode: (node: Node[] | any) => void;
 }
 
+const familyDataService = new FamilyDataService()
+
 export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
   const [rowData, setRowData] = useState<readonly any[]>([
     {
@@ -65,9 +67,9 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       resultData = await storeDataSpouse(data, parentId);
     }
 
-    await FamilyDataService.update(resultData);
+    await familyDataService.update(resultData);
 
-    FamilyDataService.updateRequestFamily(
+    familyDataService.updateRequestFamily(
       requestId,
       statusTemporaryFamily.approve
     )
@@ -81,7 +83,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
   };
 
   const rejectRequest = (requestId: number) => {
-    FamilyDataService.updateRequestFamily(
+    familyDataService.updateRequestFamily(
       requestId,
       statusTemporaryFamily.rejected
     )
@@ -100,15 +102,15 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     parentId: string,
     temporaryData: boolean = false
   ) => {
-    const getAllData = await FamilyDataService.getAll();
-    const lengthData = await FamilyDataService.getLengthData();
+    const getAllData = await familyDataService.getAll();
+    const lengthData = await familyDataService.getLengthData();
 
     newData.placeholder = temporaryData;
 
     getAllData[lengthData] = newData;
 
     //get data husband in parent (wife)
-    const spouseOfParentId = await FamilyDataService.getById(parentId).then(
+    const spouseOfParentId = await familyDataService.getById(parentId).then(
       (data) => {
         return data.spouses.length > 0 ? [data.spouses[0].id] : [];
       }
@@ -118,7 +120,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
 
     await Promise.all(
       parents.map(async (parentData) => {
-        const getDataParent = await FamilyDataService.getById(parentData);
+        const getDataParent = await familyDataService.getById(parentData);
         getDataParent.children = [
           ...getDataParent.children,
           {
@@ -127,7 +129,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
           },
         ];
 
-        const indexData = await FamilyDataService.getIndexById(parentData);
+        const indexData = await familyDataService.getIndexById(parentData);
         getAllData[indexData] = await getDataParent;
         return getAllData;
       })
@@ -141,7 +143,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     parentId: string,
     temporaryData: boolean = false
   ) => {
-    const childrenOfSpouseId = await FamilyDataService.getById(parentId).then(
+    const childrenOfSpouseId = await familyDataService.getById(parentId).then(
       (data) => {
         // kalau dia punya anak dan belum punya pasangan
         // ambil data anaknya
@@ -161,8 +163,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
 
     newData.children = children;
 
-    const getAllData = await FamilyDataService.getAll();
-    const lengthData = await FamilyDataService.getLengthData();
+    const getAllData = await familyDataService.getAll();
+    const lengthData = await familyDataService.getLengthData();
 
     newData.placeholder = temporaryData;
 
@@ -170,7 +172,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     getAllData[lengthData] = newData;
 
     // tambahkan data pasangan baru sebagai pasangan di parent data
-    const getDataParent = await FamilyDataService.getById(parentId);
+    const getDataParent = await familyDataService.getById(parentId);
     getDataParent.spouses = [
       ...getDataParent.spouses,
       {
@@ -178,10 +180,10 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
         type: RelType.married,
       },
     ];
-    const indexData = await FamilyDataService.getIndexById(parentId);
+    const indexData = await familyDataService.getIndexById(parentId);
     getAllData[indexData] = await getDataParent;
 
-    // await FamilyDataService.update(getAllData);
+    // await familyDataService.update(getAllData);
     return getAllData;
   };
 
@@ -203,8 +205,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     props.onDetailNode(resultData);
   };
 
-  useEffect(() => {
-    FamilyDataService.getAllListRequestFamily()
+  useEffect(() => { 
+    familyDataService.getAllListRequestFamily()
       .then((data: any) => {
         setRowData(data);
       })

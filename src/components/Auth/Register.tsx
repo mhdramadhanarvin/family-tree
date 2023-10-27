@@ -10,6 +10,8 @@ import React, { useCallback, useState } from "react";
 import FamilyDataService from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
 
+const familyDataService = new FamilyDataService()
+
 interface RegisterProps {
   onShow: (open: boolean) => void;
 }
@@ -45,7 +47,7 @@ export const Register = ({ ...props }: RegisterProps) => {
 
     const { email, password } = selectedValues;
 
-    FamilyDataService.userSignUp({
+    familyDataService.userSignUp({
       email,
       password,
     })
