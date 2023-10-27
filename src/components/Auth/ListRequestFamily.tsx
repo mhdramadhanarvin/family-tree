@@ -217,7 +217,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     { field: "id", headerName: "ID", width: 70 },
     {
       field: "parent",
-      headerName: "Parent",
+      headerName: "Keluarga",
       description: "This column has a value getter and is not sortable.",
       width: 270,
       valueGetter: (params: GridValueGetterParams) =>
@@ -251,7 +251,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     },
     {
       field: "action",
-      headerName: "Action",
+      headerName: "Aksi",
       width: 150,
       sortable: false,
       renderCell: ({ row }) => {
