@@ -17,6 +17,7 @@ import { Alert } from "../Skeleton/Alert";
 import css from "./App.module.css";
 import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
 import { Register } from "../Auth/Register";
+import { Maintenance } from "../Skeleton/Maintenance";
 
 const familyDataService = new FamilyDataService();
 
@@ -38,6 +39,9 @@ export default React.memo(function App() {
   const [temporaryNode, setTemporaryNode] = useState<Node[] | undefined>(
     undefined
   );
+  const maintenance =
+    process.env.REACT_APP_MAINTENANCE_STATUS !== undefined &&
+    process.env.REACT_APP_MAINTENANCE_STATUS === "true";
 
   interface AlertType {
     title: string;
@@ -112,137 +116,154 @@ export default React.memo(function App() {
   };
 
   return (
-    <div className={css.root}>
-      {alert && (
-        <Alert
-          open={true}
-          onClose={() => {}}
-          style={{
-            position: "absolute" as "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-          }}
-          message={alert.message}
-          title={alert.title}
-        />
-      )}
-      <header className={css.header}>
-        <h1 className={css.title}>FamilyTree</h1>
-        {!session && (
-          <div
-            style={{
-              display: "inline-flex",
-            }}
-          >
-            <span className={css.version} onClick={() => setShowRegister(true)}>
-              REGISTER
-            </span>
-            <span className={css.version} onClick={() => setShowLogin(true)}>
-              LOGIN
-            </span>
-          </div>
-        )}
-        {session && (
-          <span className={css.version} onClick={async () => signOut()}>
-            {session.user.email} - LOGOUT
-          </span>
-        )}
-      </header>
-      {nodes !== null && nodes.length > 0 && (
-        <PinchZoomPan min={0.5} max={2.0} captureWheel className={css.wrapper}>
-          <ReactFamilyTree
-            nodes={nodes as Readonly<Node[]>}
-            rootId={rootId || ""}
-            width={NODE_WIDTH}
-            height={NODE_HEIGHT}
-            className={css.tree}
-            renderNode={(node: Readonly<ExtNode>) => (
-              <FamilyNode
-                key={node.id}
-                node={node}
-                isRoot={node.id === rootId}
-                isHover={node.id === hoverId}
-                onClick={seeDetailNode}
-                onSubClick={setRootId}
-                style={getNodeStyle(node)}
-              />
+    <>
+      {maintenance ? (
+        <Maintenance />
+      ) : (
+        <div className={css.root}>
+          {alert && (
+            <Alert
+              open={true}
+              onClose={() => {}}
+              style={{
+                position: "absolute" as "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 400,
+                bgcolor: "background.paper",
+                border: "2px solid #000",
+                boxShadow: 24,
+                p: 4,
+              }}
+              message={alert.message}
+              title={alert.title}
+            />
+          )}
+          <header className={css.header}>
+            <h1 className={css.title}>FamilyTree</h1>
+            {!session && (
+              <div
+                style={{
+                  display: "inline-flex",
+                }}
+              >
+                <span
+                  className={css.version}
+                  onClick={() => setShowRegister(true)}
+                >
+                  REGISTER
+                </span>
+                <span
+                  className={css.version}
+                  onClick={() => setShowLogin(true)}
+                >
+                  LOGIN
+                </span>
+              </div>
             )}
-          />
-        </PinchZoomPan>
-      )}
-      {rootId !== firstNodeId && (
-        <button className={css.reset} onClick={resetRootHandler}>
-          Reset
-        </button>
-      )}
-      {selected && (
-        <NodeDetails
-          node={selected}
-          allNode={nodes}
-          className={css.details}
-          onSelect={setSelectId}
-          onHover={setHoverId}
-          onClear={() => setHoverId(undefined)}
-          onAddFamily={() => {
-            setAddFamilyId(selectId);
-            setAddFamily(true);
-          }}
-          onLogin={session}
-          userRole={userRole}
-        />
-      )}
+            {session && (
+              <span className={css.version} onClick={async () => signOut()}>
+                {session.user.email} - LOGOUT
+              </span>
+            )}
+          </header>
+          {nodes !== null && nodes.length > 0 && (
+            <PinchZoomPan
+              min={0.5}
+              max={2.0}
+              captureWheel
+              className={css.wrapper}
+            >
+              <ReactFamilyTree
+                nodes={nodes as Readonly<Node[]>}
+                rootId={rootId || ""}
+                width={NODE_WIDTH}
+                height={NODE_HEIGHT}
+                className={css.tree}
+                renderNode={(node: Readonly<ExtNode>) => (
+                  <FamilyNode
+                    key={node.id}
+                    node={node}
+                    isRoot={node.id === rootId}
+                    isHover={node.id === hoverId}
+                    onClick={seeDetailNode}
+                    onSubClick={setRootId}
+                    style={getNodeStyle(node)}
+                  />
+                )}
+              />
+            </PinchZoomPan>
+          )}
+          {rootId !== firstNodeId && (
+            <button className={css.reset} onClick={resetRootHandler}>
+              Reset
+            </button>
+          )}
+          {selected && (
+            <NodeDetails
+              node={selected}
+              allNode={nodes}
+              className={css.details}
+              onSelect={setSelectId}
+              onHover={setHoverId}
+              onClear={() => setHoverId(undefined)}
+              onAddFamily={() => {
+                setAddFamilyId(selectId);
+                setAddFamily(true);
+              }}
+              onLogin={session}
+              userRole={userRole}
+            />
+          )}
 
-      {addFamily && session && (
-        <AddFamily
-          onAdd={addFamilyId}
-          onShow={setAddFamily}
-          userRole={userRole}
-        />
-      )}
+          {addFamily && session && (
+            <AddFamily
+              onAdd={addFamilyId}
+              onShow={setAddFamily}
+              userRole={userRole}
+            />
+          )}
 
-      <Modal
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Login onShow={setShowLogin} />
-        </Box>
-      </Modal>
-      <Modal
-        open={showRegister}
-        onClose={() => setShowRegister(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Register onShow={setShowRegister} />
-        </Box>
-      </Modal>
-      {userRole === 1 && session && (
-        <SuperAdminAccess detailNode={setTemporaryNode} />
+          <Modal
+            open={showLogin}
+            onClose={() => setShowLogin(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Login onShow={setShowLogin} />
+            </Box>
+          </Modal>
+          <Modal
+            open={showRegister}
+            onClose={() => setShowRegister(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Register onShow={setShowRegister} />
+            </Box>
+          </Modal>
+          {userRole === 1 && session && (
+            <SuperAdminAccess detailNode={setTemporaryNode} />
+          )}
+        </div>
       )}
-    </div>
+    </>
   );
 });
