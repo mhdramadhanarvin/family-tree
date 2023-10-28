@@ -18,7 +18,7 @@ import css from "./App.module.css";
 import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
 import { Register } from "../Auth/Register";
 
-const familyDataService = new FamilyDataService()
+const familyDataService = new FamilyDataService();
 
 export default React.memo(function App() {
   const [source] = useState(DEFAULT_SOURCE);
@@ -50,7 +50,8 @@ export default React.memo(function App() {
       setRootId(temporaryNode[0].id);
       setNodes(temporaryNode);
     } else {
-      familyDataService.getAll()
+      familyDataService
+        .getAll()
         .then((result: Node[]) => {
           setRootId(result[0].id);
           setNodes(result);
@@ -193,6 +194,7 @@ export default React.memo(function App() {
             setAddFamily(true);
           }}
           onLogin={session}
+          userRole={userRole}
         />
       )}
 

@@ -16,6 +16,7 @@ interface NodeDetailsProps {
   onClear: () => void;
   onAddFamily: (nodeId: string | undefined) => void;
   onLogin: Session | null;
+  userRole: number | undefined;
 }
 
 export const NodeDetails = memo(function NodeDetails({
@@ -76,7 +77,7 @@ export const NodeDetails = memo(function NodeDetails({
       />
       {props.onLogin && (
         <Button variant="contained" size="small" onClick={addFamilyHandler}>
-          TAMBAH KELUARGA
+          {props.userRole === 1 ? "TAMBAH KELUARGA" : "AJUKAN TAMBAH KELUARGA"}
         </Button>
       )}
     </section>
