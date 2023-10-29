@@ -1,5 +1,6 @@
 import FamilyData, { AuthType, Node, ParentDataType, RelationType, statusTemporaryFamily } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
+import { Gender } from "relatives-tree/lib/types";
 import { v4 as uuidv4 } from "uuid";
 
 export const supabase = createClient(process.env.REACT_APP_SUPABASE_HOST || "", process.env.REACT_APP_SUPABASE_KEY || "");
@@ -26,7 +27,7 @@ class FamilyDataService {
       .from(tableName)
       .update({ tree: familyData })
       .eq('id', 1)
-      
+
     if (error) {
       throw error
     } else if (data) {
@@ -179,6 +180,29 @@ class FamilyDataService {
     } else if (data) {
       return true
     }
+  }
+
+  async getAllFatherData() {
+    return this.getAll().then(data => data.filter((dataFirst: any) => dataFirst.gender === Gender.male))
+  }
+
+  async getSpouseByHusbandId(husbandId: string) {
+    const dataHusband = await this.getById(husbandId)
+    const wifeOfHusband = dataHusband.spouses
+    let finalData: any = []
+    await Promise.all(
+      wifeOfHusband.map(async (data: Node, index: number) => {
+        const getData = await this.getById(data.id) 
+        finalData[index] = {
+          id: index,
+          label: getData.name,
+          parentId: getData.id
+        }
+        return finalData
+      })
+    )
+
+    return finalData
   }
 
   //STORAGE

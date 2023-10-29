@@ -1,4 +1,10 @@
-import React, { useMemo, useState, useCallback, useEffect } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  useEffect,
+  StrictMode,
+} from "react";
 import ReactFamilyTree from "react-family-tree";
 import { PinchZoomPan } from "../PinchZoomPan/PinchZoomPan";
 import { FamilyNode } from "../FamilyNode/FamilyNode";
@@ -18,6 +24,7 @@ import css from "./App.module.css";
 import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
 import { Register } from "../Auth/Register";
 import { Maintenance } from "../Skeleton/Maintenance";
+import { MemberAccess } from "../Skeleton/MemberAccess";
 
 const familyDataService = new FamilyDataService();
 
@@ -262,6 +269,7 @@ export default React.memo(function App() {
           {userRole === 1 && session && (
             <SuperAdminAccess detailNode={setTemporaryNode} />
           )}
+          {userRole === 2 && session && <MemberAccess />}
         </div>
       )}
     </>
