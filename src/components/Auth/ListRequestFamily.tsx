@@ -28,7 +28,7 @@ interface ListRequestFamilyProps {
   onDetailNode: (node: Node[] | any) => void;
 }
 
-const familyDataService = new FamilyDataService()
+const familyDataService = new FamilyDataService();
 
 export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
   const [rowData, setRowData] = useState<readonly any[]>([
@@ -69,10 +69,8 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
 
     await familyDataService.update(resultData);
 
-    familyDataService.updateRequestFamily(
-      requestId,
-      statusTemporaryFamily.approve
-    )
+    familyDataService
+      .updateRequestFamily(requestId, statusTemporaryFamily.approve)
       .then(() => {
         props.onDetailNode(resultData);
         setAlert({ message: "Permintaan berhasil disetujui", type: "success" });
@@ -83,13 +81,11 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
   };
 
   const rejectRequest = (requestId: number) => {
-    familyDataService.updateRequestFamily(
-      requestId,
-      statusTemporaryFamily.rejected
-    )
+    familyDataService
+      .updateRequestFamily(requestId, statusTemporaryFamily.rejected)
       .then(() => {
         props.onDetailNode(undefined);
-        setSeeDetail('')
+        setSeeDetail("");
         setAlert({ message: "Permintaan berhasil ditolak", type: "success" });
       })
       .catch((e: Error) => {
@@ -110,11 +106,11 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     getAllData[lengthData] = newData;
 
     //get data husband in parent (wife)
-    const spouseOfParentId = await familyDataService.getById(parentId).then(
-      (data) => {
+    const spouseOfParentId = await familyDataService
+      .getById(parentId)
+      .then((data) => {
         return data.spouses.length > 0 ? [data.spouses[0].id] : [];
-      }
-    );
+      });
     // gabungkan id suami dan istri untuk data parent
     const parents: string[] = [parentId].concat(spouseOfParentId);
 
@@ -143,16 +139,16 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     parentId: string,
     temporaryData: boolean = false
   ) => {
-    const childrenOfSpouseId = await familyDataService.getById(parentId).then(
-      (data) => {
+    const childrenOfSpouseId = await familyDataService
+      .getById(parentId)
+      .then((data) => {
         // kalau dia punya anak dan belum punya pasangan
         // ambil data anaknya
         // untuk dimasukkan ke pasangan baru
         return data.children.length > 0 && data.spouses.length < 1
           ? [data.children[0].id]
           : [];
-      }
-    );
+      });
 
     const children = childrenOfSpouseId.map((data: any) => {
       return {
@@ -205,8 +201,9 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     props.onDetailNode(resultData);
   };
 
-  useEffect(() => { 
-    familyDataService.getAllListRequestFamily()
+  useEffect(() => {
+    familyDataService
+      .getAllListRequestFamily()
       .then((data: any) => {
         setRowData(data);
       })

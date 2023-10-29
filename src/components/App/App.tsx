@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  StrictMode,
-} from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import ReactFamilyTree from "react-family-tree";
 import { PinchZoomPan } from "../PinchZoomPan/PinchZoomPan";
 import { FamilyNode } from "../FamilyNode/FamilyNode";
