@@ -170,8 +170,8 @@ export default React.memo(function App() {
           </header>
           {nodes !== null && nodes.length > 0 && (
             <PinchZoomPan
-              min={0.5}
-              max={2.0}
+              min={0.2}
+              max={2.5}
               captureWheel
               className={css.wrapper}
             >

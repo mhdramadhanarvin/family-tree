@@ -22,11 +22,16 @@ class FamilyDataService {
   }
 
   async update(familyData: FamilyData[]) {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from(tableName)
       .update({ tree: familyData })
       .eq('id', 1)
-    return error
+      
+    if (error) {
+      throw error
+    } else if (data) {
+      return data
+    }
   }
 
   async getById(id: any) {
