@@ -16,7 +16,7 @@ import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
 import { AlertType, RelationType } from "../../types/family.type";
 
-const familyDataService = new FamilyDataService()
+const familyDataService = new FamilyDataService();
 
 interface AddFamilyProps {
   onAdd: string | undefined;
@@ -88,11 +88,11 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       // Perform your submit logic here
       if (relationType === "children") {
         //get data husband in parent (wife)
-        const spouseOfParentId = await familyDataService.getById(parent).then(
-          (data) => {
+        const spouseOfParentId = await familyDataService
+          .getById(parent)
+          .then((data) => {
             return data.spouses.length > 0 ? [data.spouses[0].id] : [];
-          }
-        );
+          });
         // gabungkan id suami dan istri untuk data parent
         const parents: string[] = [parent].concat(spouseOfParentId);
         submitChildrenData(
@@ -101,16 +101,16 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         );
       } else if (relationType === "spouse") {
         // get data anak dari pasangan
-        const childrenOfSpouseId = await familyDataService.getById(parent).then(
-          (data) => {
+        const childrenOfSpouseId = await familyDataService
+          .getById(parent)
+          .then((data) => {
             // kalau dia punya anak dan belum punya pasangan
             // ambil data anaknya
             // untuk dimasukkan ke pasangan baru
             return data.children.length > 0 && data.spouses.length < 1
               ? [data.children[0].id]
               : [];
-          }
-        );
+          });
         // gabungkan id semua anak untuk pasangan baru
         submitSpouseData(
           { name, gender, birthday, address, job, photo },
@@ -172,12 +172,20 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
 
     // // Add data in children and parents updated
     if (props.userRole === 1) {
-      await familyDataService.update(getAllData);
-
-      setAlert({
-        message: "Berhasil menambahkan keluarga!",
-        type: "success",
-      });
+      familyDataService
+        .update(getAllData)
+        .then((data) => {
+          setAlert({
+            message: "Berhasil menambahkan keluarga!",
+            type: "success",
+          });
+        })
+        .catch((e: Error) => {
+          setAlert({
+            message: e.message,
+            type: "error",
+          });
+        });
     } else {
       const getDataRealParent = await familyDataService.getById(parents[0].id);
       await familyDataService.storeTemporaryFamilyData(
@@ -259,12 +267,20 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
 
     if (props.userRole === 1) {
       // simpan semua struktur
-      await familyDataService.update(getAllData);
-
-      setAlert({
-        message: "Berhasil menambahkan keluarga!",
-        type: "success",
-      });
+      familyDataService
+        .update(getAllData)
+        .then((data) => { 
+          setAlert({
+            message: "Berhasil menambahkan keluarga!",
+            type: "success",
+          });
+        })
+        .catch((e: Error) => {
+          setAlert({
+            message: e.message,
+            type: "error",
+          });
+        });
     } else {
       await familyDataService.storeTemporaryFamilyData(
         {
