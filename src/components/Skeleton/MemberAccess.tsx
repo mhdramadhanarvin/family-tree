@@ -1,6 +1,7 @@
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import {
+  Alert,
   Autocomplete,
   Box,
   Button,
@@ -11,14 +12,19 @@ import {
   MenuItem,
   Modal,
   Select,
+  Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
+import CircularProgress from "@mui/joy/CircularProgress";
+import { useEffect, useState } from "react";
 import { GridCloseIcon } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FamilyDataService from "../../services/FamilyDataService";
 import { Refresh } from "@mui/icons-material";
+import { AlertType } from "../../types/family.type";
+import { v4 as uuidv4 } from "uuid";
+import { RelType } from "relatives-tree/lib/types";
 
 const familyDataService = new FamilyDataService();
 
@@ -48,6 +54,9 @@ export const MemberAccess = () => {
   const [listFather, setListFather] = useState<ParentData[]>([]);
   const [listMother, setListMother] = useState<ParentData[]>([]);
   const [showForm, setShowForm] = useState<boolean>(false);
+  const [onLoad, setOnLoad] = useState<boolean>(false);
+  const [alert, setAlert] = useState<AlertType | undefined>();
+  const [onProgress, setOnProgress] = useState<boolean>(false);
   const [selectedValues, setSelectedValues] = useState<FormSubmit>({
     father: "",
     mother: "",
@@ -58,6 +67,7 @@ export const MemberAccess = () => {
       },
     ],
   });
+
   const handleChange = (group: string, value: any) => {
     setSelectedValues((prevSelectedValues) => ({
       ...prevSelectedValues,
@@ -77,12 +87,6 @@ export const MemberAccess = () => {
     handleChange("person", filteredFields);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    console.log(selectedValues);
-  };
-
   useEffect(() => {
     if (showForm) {
       if (selectedValues.father === undefined) {
@@ -90,43 +94,180 @@ export const MemberAccess = () => {
         setListMother([]);
       }
       if (selectedValues.father === "") {
-        familyDataService
-          .getAllFatherData()
-          .then((data) => {
-            const mapData = data.map((result: ParentDataMap, index: number) => {
-              return {
-                id: index,
-                label: result.name,
-                parentId: result.id,
-              };
-            });
-            setListFather(mapData);
-            console.log("GET FATHER");
-          })
-          .catch((e: Error) => {
-            console.log("Error", e);
-          });
+        getFatherData(true);
       }
     }
   }, [
-    listFather,
-    listMother,
+    // listFather,
+    // listMother,
     selectedValues.father,
     selectedValues.mother,
     showForm,
   ]);
 
+  const refreshData = () => {
+    setOnLoad(true);
+    if (selectedValues.father === undefined || selectedValues.father === "")
+      getFatherData();
+    getMotherData();
+  };
+
   const getMotherData = () => {
+    if (selectedValues.father) {
+      setListMother([]);
+      familyDataService
+        .getSpouseByHusbandId(selectedValues.father)
+        .then((data) => {
+          handleChange("mother", undefined);
+          setListMother(data);
+          setOnLoad(false);
+          console.log("GET MOTHER");
+        })
+        .catch((e: Error) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const getFatherData = (byPassOnload = false) => {
     familyDataService
-      .getSpouseByHusbandId(selectedValues.father)
+      .getAllFatherData()
       .then((data) => {
-        handleChange("mother", "");
-        setListMother(data);
+        const mapData = data.map((result: ParentDataMap, index: number) => {
+          return {
+            id: index,
+            label: result.name,
+            parentId: result.id,
+          };
+        });
+        if (!byPassOnload) setOnLoad(false);
+        setListFather(mapData);
+        console.log("GET FATHER");
       })
       .catch((e: Error) => {
-        console.log(e);
+        console.log("Error", e);
       });
   };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setOnProgress(true);
+    const { father, mother, person } = selectedValues;
+
+    if (validateData(selectedValues)) {
+      const parents = [
+        {
+          id: father,
+          type: RelType.blood,
+        },
+        {
+          id: mother,
+          type: RelType.blood,
+        },
+      ];
+
+      const newData = person.map((data) => {
+        return {
+          id: uuidv4(),
+          name: data.name,
+          gender: data.gender,
+          parents,
+        };
+      });
+
+      let getAllData = await familyDataService.getAll();
+      getAllData = getAllData.concat(newData);
+
+      const childrenData = newData.map((data) => {
+        return {
+          id: data.id,
+          type: RelType.blood,
+        };
+      });
+      // ADD CHILDREN FOR FATHER
+      const getFatherData = await familyDataService.getById(father);
+      getFatherData.children = getFatherData.children.concat(childrenData);
+      const indexFather = await familyDataService.getIndexById(father);
+      getAllData[indexFather] = getFatherData;
+
+      // ADD CHILDREN FOR MOTHER
+      const getMotherData = await familyDataService.getById(mother);
+      getMotherData.children = getMotherData.children.concat(childrenData);
+      const indexMother = await familyDataService.getIndexById(mother);
+      getAllData[indexMother] = getMotherData;
+      
+      familyDataService
+        .update(getAllData)
+        .then(() => {
+          setAlert({
+            message: "Berhasil menambahkan keluarga!",
+            type: "success",
+          });
+          setOnProgress(false);
+          setSelectedValues({
+            father: "",
+            mother: "",
+            person: [
+              {
+                name: "",
+                gender: "male",
+              },
+            ],
+          });
+        })
+        .catch((e: Error) => {
+          setAlert({
+            message: e.message,
+            type: "error",
+          });
+          setOnProgress(false);
+        });
+    }
+  };
+
+  const validateData = (data: FormSubmit) => {
+    const { father, mother, person } = data;
+    let statusValidation = true;
+
+    if (father === "" || father === undefined) {
+      setAlert({
+        message: "Pilih nama ayah terlebih dahulu!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    } else if (mother === "" || mother === undefined) {
+      setAlert({
+        message: "Pilih nama ibu terlebih dahulu!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    } else if (person.length === 0) {
+      setAlert({
+        message: "Tambah data anak terlebih dahulu!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    }
+
+    return statusValidation;
+  };
+
+  const closeHandler = () => {
+    setSelectedValues({
+      father: "",
+      mother: "",
+      person: [
+        {
+          name: "",
+          gender: "male",
+        },
+      ],
+    });
+    setShowForm(false)
+  }
 
   return (
     <>
@@ -144,7 +285,7 @@ export const MemberAccess = () => {
       </Box>
       <Modal
         open={showForm}
-        onClose={() => setShowForm(false)}
+        onClose={closeHandler}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         sx={{
@@ -156,14 +297,12 @@ export const MemberAccess = () => {
       >
         <Box
           sx={{
-            // width: "50%",
             width: "100%",
             "@media (min-width: 780px)": {
               width: "70%",
             },
             backgroundColor: "white",
             padding: 3,
-            // paddingBottom: 10,
           }}
           component="form"
           onSubmit={handleSubmit}
@@ -175,10 +314,30 @@ export const MemberAccess = () => {
             sx={{
               float: "right",
             }}
-            onClick={() => setShowForm(false)}
+            onClick={closeHandler}
           >
             <GridCloseIcon fontSize="inherit" />
           </IconButton>
+          {alert && (
+            <Snackbar
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={alert ? true : false}
+              autoHideDuration={6000}
+              onClose={() => setAlert(undefined)}
+            >
+              <Alert
+                onClose={() => setAlert(undefined)}
+                severity={alert.type}
+                variant="filled"
+                sx={{ width: "100%" }}
+              >
+                {alert.message}
+              </Alert>
+            </Snackbar>
+          )}
           <Typography
             component="h1"
             variant="h5"
@@ -246,8 +405,8 @@ export const MemberAccess = () => {
               />
             </Grid>
             <Grid item xs={1}>
-              <IconButton onClick={getMotherData}>
-                <Refresh />
+              <IconButton onClick={refreshData}>
+                {onLoad ? <CircularProgress size="sm" /> : <Refresh />}
               </IconButton>
             </Grid>
           </Grid>
@@ -302,12 +461,11 @@ export const MemberAccess = () => {
             </Grid>
           ))}
           <Button variant="contained" onClick={handleAddPerson} sx={{ mt: 2 }}>
-            TAMBAH DATA
+            TAMBAH DATA ANAK
           </Button>
           <Box marginTop={2}>
             <Button type="submit" variant="contained" color="primary" fullWidth>
-              {/* {onProgress ? <CircularProgress color="inherit" /> : "SIMPAN"} */}
-              SIMPAN
+              {onProgress ? <CircularProgress size="sm" /> : "SIMPAN"}
             </Button>
           </Box>
         </Box>

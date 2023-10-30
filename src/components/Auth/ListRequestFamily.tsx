@@ -72,7 +72,7 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     familyDataService
       .updateRequestFamily(requestId, statusTemporaryFamily.approve)
       .then(() => {
-        props.onDetailNode(resultData);
+        props.onDetailNode(undefined);
         setAlert({ message: "Permintaan berhasil disetujui", type: "success" });
       })
       .catch((e: Error) => {
@@ -179,7 +179,6 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     const indexData = await familyDataService.getIndexById(parentId);
     getAllData[indexData] = await getDataParent;
 
-    // await familyDataService.update(getAllData);
     return getAllData;
   };
 

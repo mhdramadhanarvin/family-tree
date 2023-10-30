@@ -11,7 +11,8 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import FamilyDataService from "../../services/FamilyDataService";
 import { v4 as uuidv4 } from "uuid";
-import { Alert, CircularProgress, Snackbar } from "@mui/material";
+import { Alert, Snackbar } from "@mui/material";
+import CircularProgress from "@mui/joy/CircularProgress";
 import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
 import { AlertType, RelationType } from "../../types/family.type";
@@ -470,7 +471,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           </Box>
         )}
         <Button type="submit" variant="contained" color="primary">
-          {onProgress ? <CircularProgress color="inherit" /> : "SIMPAN"}
+          {onProgress ? <CircularProgress size="sm" /> : "SIMPAN"}
         </Button>
       </Stack>
     </Box>
