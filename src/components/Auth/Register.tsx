@@ -75,7 +75,7 @@ export const Register = ({ ...props }: RegisterProps) => {
         .then(() => {
           setOnProgress(false);
           setAlert({
-            message: "Berhasil daftar, silahkan menunggu validasi data...",
+            message: "Berhasil daftar, silahkan menunggu verifikas data...",
             type: "success",
           });
           setTimeout(async () => {
