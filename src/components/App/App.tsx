@@ -113,6 +113,7 @@ export default React.memo(function App() {
 
   const signOut = async () => {
     setUserRole(undefined);
+    setTemporaryNode(undefined);
     return await supabase.auth.signOut();
   };
 
@@ -260,10 +261,10 @@ export default React.memo(function App() {
               <Register onShow={setShowRegister} />
             </Box>
           </Modal>
-          {userRole === 1 && session && (
+          {/* {userRole === 1 && session && (
             <SuperAdminAccess detailNode={setTemporaryNode} />
-          )}
-          {userRole === 2 && session && <MemberAccess />}
+          )} */}
+          {session && <MemberAccess />}
         </div>
       )}
     </>
