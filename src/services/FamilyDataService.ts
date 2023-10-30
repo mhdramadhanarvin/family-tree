@@ -192,7 +192,7 @@ class FamilyDataService {
     let finalData: any = []
     await Promise.all(
       wifeOfHusband.map(async (data: Node, index: number) => {
-        const getData = await this.getById(data.id) 
+        const getData = await this.getById(data.id)
         finalData[index] = {
           id: index,
           label: getData.name,
