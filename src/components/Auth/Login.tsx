@@ -7,10 +7,12 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import FamilyDataService from "../../services/FamilyDataService";
+import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
+import { Role } from "../../types/family.type";
+import { CircularProgress } from "@mui/joy";
 
-const familyDataService = new FamilyDataService()
+const familyDataService = new FamilyDataService();
 
 interface LoginProps {
   onShow: (open: boolean) => void;
@@ -28,6 +30,7 @@ interface AlertType {
 
 export const Login = ({ ...props }: LoginProps) => {
   const [alert, setAlert] = useState<AlertType | undefined>();
+  const [onProgress, setOnProgress] = useState<boolean>(false);
   const [selectedValues, setSelectedValues] = React.useState<FormSubmit>({
     email: "",
     password: "",
@@ -44,23 +47,42 @@ export const Login = ({ ...props }: LoginProps) => {
 
   const signInWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setOnProgress(true);
 
-    familyDataService.userSignIn(selectedValues)
-      .then((data) => {
-        setAlert({
-          message: "Berhasil Login, silahkan menunggu...",
-          type: "success",
-        });
+    familyDataService
+      .userSignIn(selectedValues)
+      .then(async (data) => {
+        const getStatus = await familyDataService.getProfileById(
+          data?.user.id || ""
+        );
 
-        setTimeout(() => {
-          props.onShow(false);
-        }, 1500);
+        if (
+          (getStatus.role_id === Role.member && getStatus.is_verify === true) ||
+          getStatus.role_id === Role.administrator
+        ) {
+          setOnProgress(false);
+          setAlert({
+            message: "Berhasil Login, silahkan menunggu...",
+            type: "success",
+          });
+          setTimeout(() => {
+            props.onShow(false);
+          }, 1500);
+        } else {
+          await supabase.auth.signOut();
+          setOnProgress(false);
+          setAlert({
+            message: "Akun dalam proses verifikasi admin, silahkan menunggu...",
+            type: "error",
+          });
+        }
       })
       .catch((e: Error) => {
         setAlert({
           message: "Email atau password salah",
           type: "error",
         });
+        setOnProgress(false);
       });
   };
 
@@ -146,7 +168,7 @@ export const Login = ({ ...props }: LoginProps) => {
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Sign In
+          {onProgress ? <CircularProgress size="sm" /> : "Sign In"}
         </Button>
       </Box>
     </>

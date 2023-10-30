@@ -35,7 +35,7 @@ export interface AuthType {
   password: string;
 }
 
-export interface RegisterType extends AuthType{
+export interface RegisterType extends AuthType {
   fatherId: string;
   motherId: string;
 }
@@ -69,4 +69,9 @@ export interface TemporaryFamilyType {
   data: object;
   status: typeof statusTemporaryFamily;
   created_at: string
+}
+
+export enum Role {
+  administrator = 1,
+  member = 2
 }
