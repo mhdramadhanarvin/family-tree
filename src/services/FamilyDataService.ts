@@ -1,4 +1,4 @@
-import FamilyData, { AuthType, Node, ParentDataType, RelationType, statusTemporaryFamily } from "../types/family.type"
+import FamilyData, { AuthType, Node, ParentDataType, RegisterType, RelationType, statusTemporaryFamily } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
 import { Gender } from "relatives-tree/lib/types";
 import { v4 as uuidv4 } from "uuid";
@@ -110,7 +110,7 @@ class FamilyDataService {
     }
   }
 
-  async userSignUp({ email, password }: AuthType) {
+  async userSignUp({ email, password, fatherId, motherId }: RegisterType) {
     const { data: dataAuth, error: authError } = await supabase.auth.signUp({ email, password })
     if (authError) {
       throw authError
@@ -119,7 +119,10 @@ class FamilyDataService {
       const { data: dataProfile, error: insertError } = await supabase.from('profile').insert({
         id: userId,
         role_id: 2,
-        name: ""
+        name: "",
+        father_id: fatherId,
+        mother_id: motherId,
+        is_verify: false
       })
       if (insertError) {
         throw insertError

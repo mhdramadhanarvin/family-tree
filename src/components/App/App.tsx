@@ -96,7 +96,7 @@ export default React.memo(function App() {
     return () => {
       subscription.unsubscribe();
     };
-  }, [nodes, rootId, temporaryNode]);
+  }, []);
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),

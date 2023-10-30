@@ -1,16 +1,20 @@
 import {
   Alert,
+  Autocomplete,
   Box,
   Button,
+  Grid,
   IconButton,
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useCallback, useState } from "react";
-import FamilyDataService from "../../services/FamilyDataService";
+import React, { useCallback, useEffect, useState } from "react";
+import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
+import { CircularProgress } from "@mui/joy";
+import { Refresh } from "@mui/icons-material";
 
-const familyDataService = new FamilyDataService()
+const familyDataService = new FamilyDataService();
 
 interface RegisterProps {
   onShow: (open: boolean) => void;
@@ -19,6 +23,8 @@ interface RegisterProps {
 interface FormSubmit {
   email: string;
   password: string;
+  fatherId: string;
+  motherId: string;
 }
 
 interface AlertType {
@@ -26,11 +32,28 @@ interface AlertType {
   type: "error" | "warning" | "info" | "success";
 }
 
+interface AllData {
+  id: string;
+  label: string;
+  parentId: string;
+}
+
+interface ParentDataMap {
+  id: number;
+  name: string;
+}
+
 export const Register = ({ ...props }: RegisterProps) => {
   const [alert, setAlert] = useState<AlertType | undefined>();
+  const [listFather, setListFather] = useState<AllData[]>([]);
+  const [listMother, setListMother] = useState<AllData[]>([]);
+  const [onLoad, setOnLoad] = useState<boolean>(false);
+  const [onProgress, setOnProgress] = useState<boolean>(false);
   const [selectedValues, setSelectedValues] = React.useState<FormSubmit>({
     email: "",
     password: "",
+    fatherId: "",
+    motherId: "",
   });
 
   const handleChange = (group: string, value: any) => {
@@ -44,30 +67,115 @@ export const Register = ({ ...props }: RegisterProps) => {
 
   const signUpWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setOnProgress(true);
 
-    const { email, password } = selectedValues;
-
-    familyDataService.userSignUp({
-      email,
-      password,
-    })
-      .then(() => {
-        setAlert({
-          message: "Berhasil daftar, silahkan menunggu...",
-          type: "success",
+    if (validateData(selectedValues)) {
+      familyDataService
+        .userSignUp(selectedValues)
+        .then(() => {
+          setOnProgress(false);
+          setAlert({
+            message: "Berhasil daftar, silahkan menunggu validasi data...",
+            type: "success",
+          });
+          setTimeout(async () => {
+            await supabase.auth.signOut();
+            props.onShow(false);
+          }, 2500);
+        })
+        .catch((e: Error) => {
+          setOnProgress(false);
+          setAlert({
+            message: e.message,
+            type: "error",
+          });
         });
+    }
+  };
 
-        setTimeout(() => {
-          props.onShow(false);
-        }, 1500);
+  const validateData = (data: FormSubmit) => {
+    const { email, password, fatherId, motherId } = data;
+    let statusValidation = true;
+
+    if (!email) {
+      setAlert({
+        message: "Email wajib diisi!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    } else if (!password) {
+      setAlert({
+        message: "Password wajib diisi!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    } else if (fatherId === "" || fatherId === undefined) {
+      setAlert({
+        message: "Pilih nama ayah terlebih dahulu!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    } else if (motherId === "" || motherId === undefined) {
+      setAlert({
+        message: "Pilih nama ibu terlebih dahulu!",
+        type: "error",
+      });
+      setOnProgress(false);
+      return (statusValidation = false);
+    }
+
+    return statusValidation;
+  };
+
+  const getFatherData = (byPassOnload = false) => {
+    familyDataService
+      .getAllFatherData()
+      .then((data) => {
+        const mapData = data.map((result: ParentDataMap) => {
+          return {
+            id: result.id,
+            label: result.name,
+          };
+        });
+        if (!byPassOnload) setOnLoad(false);
+        setListFather(mapData);
+        console.log("GET FATHER");
       })
       .catch((e: Error) => {
-        setAlert({
-          message: e.message,
-          type: "error",
-        });
+        console.log("Error", e);
       });
   };
+
+  const getMotherData = () => {
+    if (selectedValues.fatherId) {
+      setListMother([]);
+      familyDataService
+        .getSpouseByHusbandId(selectedValues.fatherId)
+        .then((data) => {
+          handleChange("motherId", undefined);
+          setListMother(data);
+          setOnLoad(false);
+          console.log("GET MOTHER");
+        })
+        .catch((e: Error) => {
+          console.log(e);
+        });
+    }
+  };
+
+  const refreshData = () => {
+    setOnLoad(true);
+    if (selectedValues.fatherId === undefined || selectedValues.fatherId === "")
+      getFatherData();
+    getMotherData();
+  };
+
+  useEffect(() => {
+    getFatherData();
+  }, []);
 
   return (
     <>
@@ -117,10 +225,10 @@ export const Register = ({ ...props }: RegisterProps) => {
           </Alert>
         )}
         <Typography component="h1" variant="h5">
-          Register
+          Daftar
         </Typography>
         <TextField
-          margin="normal"
+          margin="dense"
           required
           fullWidth
           id="email"
@@ -128,30 +236,84 @@ export const Register = ({ ...props }: RegisterProps) => {
           name="email"
           autoComplete="email"
           autoFocus
+          size="small"
           onChange={(e) => handleChange("email", e.target.value)}
         />
         <TextField
-          margin="normal"
+          margin="dense"
           required
           fullWidth
           name="password"
           label="Password"
           type="password"
           id="password"
+          size="small"
           autoComplete="current-password"
           onChange={(e) => handleChange("password", e.target.value)}
         />
-        {/* <FormControlLabel
-          control={<Checkbox value="remember" color="primary" />}
-          label="Remember me"
-        /> */}
+        <Autocomplete
+          fullWidth
+          disablePortal
+          id="father"
+          options={listFather}
+          size="small"
+          sx={{ marginTop: 1 }}
+          onChange={(e, v) => {
+            handleChange("motherId", undefined);
+            setListMother([]);
+            handleChange("fatherId", v?.id);
+          }}
+          isOptionEqualToValue={(option, value) => option.label === value.label}
+          renderOption={(props, option) => {
+            return (
+              <li {...props} key={option.id}>
+                {option.label}
+              </li>
+            );
+          }}
+          renderInput={(params) => <TextField {...params} label="Nama Ayah" />}
+        />
+        <Grid container spacing={0}>
+          <Grid item xs={10}>
+            <Autocomplete
+              disabled={listMother.length === 0}
+              fullWidth
+              disablePortal
+              id="mother"
+              options={listMother}
+              size="small"
+              sx={{ marginTop: 1 }}
+              onChange={(e, v) => {
+                handleChange("motherId", v?.parentId);
+              }}
+              isOptionEqualToValue={(option, value) =>
+                option.label === value.label
+              }
+              renderOption={(props, option) => {
+                return (
+                  <li {...props} key={option.id}>
+                    {option.label}
+                  </li>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField {...params} label="Nama Ibu " />
+              )}
+            />
+          </Grid>
+          <Grid item xs={2} sx={{ padding: 1 }}>
+            <IconButton onClick={refreshData}>
+              {onLoad ? <CircularProgress size="sm" /> : <Refresh />}
+            </IconButton>
+          </Grid>
+        </Grid>
         <Button
           type="submit"
           fullWidth
           variant="contained"
           sx={{ mt: 3, mb: 2 }}
         >
-          Sign Up
+          {onProgress ? <CircularProgress size="sm" /> : "DAFTAR"}
         </Button>
       </Box>
     </>
