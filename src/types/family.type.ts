@@ -35,6 +35,11 @@ export interface AuthType {
   password: string;
 }
 
+export interface RegisterType extends AuthType{
+  fatherId: string;
+  motherId: string;
+}
+
 export interface AlertType {
   message: string;
   type: "error" | "warning" | "info" | "success";
