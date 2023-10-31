@@ -6,31 +6,24 @@ import {
   Chip,
   Snackbar,
   Alert,
+  Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useCallback, useEffect, useState } from "react";
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import FamilyDataService from "../../services/FamilyDataService";
-import FamilyData, {
-  AlertType,
-  Node,
-  RelationType,
-  statusTemporaryFamily,
-} from "../../types/family.type";
-import { Check, Visibility } from "@mui/icons-material";
-import { RelType } from "relatives-tree/lib/types";
-import classNames from "classnames";
-import css from "./ListRequestFamily.module.css";
+import { AlertType } from "../../types/family.type";
+import { Check, Refresh } from "@mui/icons-material";
 
-interface ListRequestFamilyProps {
+interface ListRequestUsersProps {
   onShow: boolean;
   setShow: (open: boolean) => void;
-  onDetailNode: (node: Node[] | any) => void;
 }
 
 const familyDataService = new FamilyDataService();
 
-export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
+export const ListRequestUsers = ({ ...props }: ListRequestUsersProps) => {
+  const [alert, setAlert] = useState<AlertType | undefined>(undefined);
   const [rowData, setRowData] = useState<readonly any[]>([
     {
       id: 1,
@@ -41,201 +34,86 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       status: 1,
     },
   ]);
-  const [alert, setAlert] = useState<AlertType | undefined>(undefined);
-  const [seeDetail, setSeeDetail] = useState<string>();
 
-  const approveRequest = async (
-    requestId: number,
-    parentId: string,
-    relationType: RelationType,
-    data: FamilyData
-  ) => {
-    let resultData: FamilyData[] = [
-      {
-        id: "user1",
-        name: "Nama",
-        gender: "male",
-        parents: [],
-        siblings: [],
-        spouses: [],
-        children: [],
-      },
-    ];
-    if (relationType === RelationType.children) {
-      resultData = await storeDataChildren(data, parentId);
-    } else if (relationType === RelationType.spouse) {
-      resultData = await storeDataSpouse(data, parentId);
-    }
-
-    await familyDataService.update(resultData);
-
+  const approveRequest = async (requestId: string) => {
     familyDataService
-      .updateRequestFamily(requestId, statusTemporaryFamily.approve)
+      .approvedUser(requestId)
       .then(() => {
-        props.onDetailNode(undefined);
-        setAlert({ message: "Permintaan berhasil disetujui", type: "success" });
+        fetchData();
+        setAlert({
+          message: "Permintaan berhasil disetujui",
+          type: "success",
+        });
       })
       .catch((e: Error) => {
-        setAlert({ message: e.message, type: "error" });
+        fetchData();
+        setAlert({
+          message: e.message,
+          type: "error",
+        });
       });
   };
 
-  const rejectRequest = (requestId: number) => {
+  const rejectRequest = (requestId: string) => {
     familyDataService
-      .updateRequestFamily(requestId, statusTemporaryFamily.rejected)
+      .rejectedUser(requestId)
       .then(() => {
-        props.onDetailNode(undefined);
-        setSeeDetail("");
-        setAlert({ message: "Permintaan berhasil ditolak", type: "success" });
+        fetchData();
+        setAlert({
+          message: "Permintaan berhasil ditolak",
+          type: "success",
+        });
       })
       .catch((e: Error) => {
-        setAlert({ message: e.message, type: "error" });
+        fetchData();
+        setAlert({
+          message: e.message,
+          type: "error",
+        });
       });
   };
 
-  const storeDataChildren = async (
-    newData: FamilyData,
-    parentId: string,
-    temporaryData: boolean = false
-  ) => {
-    const getAllData = await familyDataService.getAll();
-    const lengthData = await familyDataService.getLengthData();
-
-    newData.placeholder = temporaryData;
-
-    getAllData[lengthData] = newData;
-
-    //get data husband in parent (wife)
-    const spouseOfParentId = await familyDataService
-      .getById(parentId)
-      .then((data) => {
-        return data.spouses.length > 0 ? [data.spouses[0].id] : [];
-      });
-    // gabungkan id suami dan istri untuk data parent
-    const parents: string[] = [parentId].concat(spouseOfParentId);
-
-    await Promise.all(
-      parents.map(async (parentData) => {
-        const getDataParent = await familyDataService.getById(parentData);
-        getDataParent.children = [
-          ...getDataParent.children,
-          {
-            id: newData.id,
-            type: RelType.blood,
-          },
-        ];
-
-        const indexData = await familyDataService.getIndexById(parentData);
-        getAllData[indexData] = await getDataParent;
-        return getAllData;
-      })
-    );
-
-    return getAllData;
-  };
-
-  const storeDataSpouse = async (
-    newData: FamilyData,
-    parentId: string,
-    temporaryData: boolean = false
-  ) => {
-    const childrenOfSpouseId = await familyDataService
-      .getById(parentId)
-      .then((data) => {
-        // kalau dia punya anak dan belum punya pasangan
-        // ambil data anaknya
-        // untuk dimasukkan ke pasangan baru
-        return data.children.length > 0 && data.spouses.length < 1
-          ? [data.children[0].id]
-          : [];
-      });
-
-    const children = childrenOfSpouseId.map((data: any) => {
-      return {
-        id: data,
-        type: "blood",
-      };
-    });
-
-    newData.children = children;
-
-    const getAllData = await familyDataService.getAll();
-    const lengthData = await familyDataService.getLengthData();
-
-    newData.placeholder = temporaryData;
-
-    // masukkan data pasangan baru dan anaknya
-    getAllData[lengthData] = newData;
-
-    // tambahkan data pasangan baru sebagai pasangan di parent data
-    const getDataParent = await familyDataService.getById(parentId);
-    getDataParent.spouses = [
-      ...getDataParent.spouses,
-      {
-        id: newData.id,
-        type: RelType.married,
-      },
-    ];
-    const indexData = await familyDataService.getIndexById(parentId);
-    getAllData[indexData] = await getDataParent;
-
-    return getAllData;
-  };
-
-  const previewNode = async (
-    requestId: number,
-    parentId: string,
-    relationType: RelationType,
-    data: FamilyData
-  ) => {
-    props.setShow(false);
-
-    let resultData;
-    if (relationType === RelationType.children) {
-      resultData = await storeDataChildren(data, parentId, true);
-    } else if (relationType === RelationType.spouse) {
-      resultData = await storeDataSpouse(data, parentId, true);
-    }
-
-    props.onDetailNode(resultData);
-  };
-
-  useEffect(() => {
+  const fetchData = () => {
     familyDataService
-      .getAllListRequestFamily()
+      .getListRequestUsers()
       .then((data: any) => {
         setRowData(data);
       })
       .catch((e: Error) => {
         console.log(e.message);
       });
-  }, [rowData]);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 70 },
     {
-      field: "parent",
-      headerName: "Keluarga",
-      description: "This column has a value getter and is not sortable.",
-      width: 270,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.parent_name || ""}`,
+      field: "name",
+      headerName: "Nama",
+      width: 200,
       headerAlign: "center",
       align: "center",
     },
     {
-      field: "relation_type",
-      headerName: "Hubungan",
-      width: 130,
-      renderCell: ({ row }) =>
-        row.relation_type === "children" ? "ANAK" : "SUAMI/ISTRI",
+      field: "fatherName",
+      headerName: "Nama Ayah",
+      width: 270,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "motherName",
+      headerName: "Nama Ibu",
+      width: 270,
       headerAlign: "center",
       align: "center",
     },
     {
       field: "status",
       headerName: "Status",
-      width: 130,
+      width: 100,
       renderCell: ({ row }) =>
         row.status === 1 ? (
           <Chip label="PENDING" color="warning" />
@@ -250,35 +128,16 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
     {
       field: "action",
       headerName: "Aksi",
-      width: 150,
+      width: 100,
       sortable: false,
       renderCell: ({ row }) => {
         return (
           <>
             <IconButton
-              aria-label="detail"
-              disabled={row.status !== 1}
-              className={classNames(css.selectedButton)}
-              onClick={() => {
-                previewNode(row.id, row.parent_id, row.relation_type, row.data);
-                setSeeDetail(row.id);
-              }}
-              sx={{
-                color: seeDetail === row.id ? "blue" : "",
-              }}
-            >
-              <Visibility />
-            </IconButton>
-            <IconButton
               aria-label="setujui"
               disabled={row.status !== 1}
               onClick={() => {
-                approveRequest(
-                  row.id,
-                  row.parent_id,
-                  row.relation_type,
-                  row.data
-                );
+                approveRequest(row.id);
               }}
             >
               <Check />
@@ -340,7 +199,6 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
       >
         <Box
           sx={{
-            // width: "50%",
             width: "100%",
             "@media (min-width: 780px)": {
               width: "50%",
@@ -370,6 +228,10 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
           >
             Daftar Permintaan Penambahan Keluarga
           </Typography>
+          <Button variant="contained" size="small" onClick={fetchData}>
+            <Refresh />
+            REFRESH DATA
+          </Button>
           <DataGrid
             rows={rowData}
             columns={columns}
@@ -379,7 +241,6 @@ export const ListRequestFamily = ({ ...props }: ListRequestFamilyProps) => {
               },
             }}
             pageSizeOptions={[5, 10]}
-            // checkboxSelection
           />
         </Box>
       </Modal>

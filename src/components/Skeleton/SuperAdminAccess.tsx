@@ -1,22 +1,13 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
-import { AccountTree } from "@mui/icons-material";
-import { ListRequestFamily } from "../Auth/ListRequestFamily";
-import { Node } from "../../types/family.type";
+import { AdminPanelSettings, Group } from "@mui/icons-material";
+import { ListRequestUsers } from "../Auth/ListRequestFamily";
 
-const actions = [
-  // { id: 1, icon: <PeopleAlt />, name: "Daftar Pengguna" },
-  { id: 2, icon: <AccountTree />, name: "Keluarga" },
-];
+const actions = [{ id: 2, icon: <Group />, name: "Keluarga" }];
 
-interface SuperAdminAccessProps {
-  detailNode: (node: Node[]) => void;
-}
-
-export const SuperAdminAccess = ({ ...props }: SuperAdminAccessProps) => {
+export const SuperAdminAccess = () => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -33,8 +24,8 @@ export const SuperAdminAccess = ({ ...props }: SuperAdminAccessProps) => {
       <Box>
         <SpeedDial
           ariaLabel="SpeedDial controlled open example"
-          sx={{ position: "absolute", bottom: 16, right: 16 }}
-          icon={<SpeedDialIcon />}
+          sx={{ position: "absolute", bottom: 16, right: 75 }}
+          icon={<AdminPanelSettings />}
           onClose={handleClose}
           onOpen={handleOpen}
           open={open}
@@ -49,11 +40,7 @@ export const SuperAdminAccess = ({ ...props }: SuperAdminAccessProps) => {
           ))}
         </SpeedDial>
       </Box>
-      <ListRequestFamily
-        onShow={showListRequest}
-        setShow={setShowListRequest}
-        onDetailNode={props.detailNode}
-      />
+      <ListRequestUsers onShow={showListRequest} setShow={setShowListRequest} />
     </>
   );
 };

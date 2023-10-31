@@ -10,12 +10,11 @@ import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import { Node } from "../../types/family.type";
 import { ExtNode } from "relatives-tree/lib/types";
 import { Session } from "@supabase/supabase-js";
-import { Box, Modal } from "@mui/material";
 import { Login } from "../Auth/Login";
 import { Alert } from "../Skeleton/Alert";
 
 import css from "./App.module.css";
-// import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
+import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
 import { Register } from "../Auth/Register";
 import { Maintenance } from "../Skeleton/Maintenance";
 import { MemberAccess } from "../Skeleton/MemberAccess";
@@ -236,9 +235,7 @@ export default React.memo(function App() {
 
           <Login onShow={showLogin} setShow={setShowLogin} />
           <Register onShow={showRegister} setShow={setShowRegister} />
-          {/* {userRole === 1 && session && (
-            <SuperAdminAccess detailNode={setTemporaryNode} />
-          )} */}
+          {userRole === 1 && session && <SuperAdminAccess />}
           {session && <MemberAccess onRefresh={fetchData} />}
         </div>
       )}

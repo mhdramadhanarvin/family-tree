@@ -24,6 +24,7 @@ interface RegisterProps {
 
 interface FormSubmit {
   email: string;
+  name: string;
   password: string;
   fatherId: string;
   motherId: string;
@@ -53,6 +54,7 @@ export const Register = ({ ...props }: RegisterProps) => {
   const [onProgress, setOnProgress] = useState<boolean>(false);
   const [selectedValues, setSelectedValues] = React.useState<FormSubmit>({
     email: "",
+    name: "",
     password: "",
     fatherId: "",
     motherId: "",
@@ -243,6 +245,18 @@ export const Register = ({ ...props }: RegisterProps) => {
             <Typography component="h1" variant="h5">
               Daftar
             </Typography>
+            <TextField
+              margin="dense"
+              required
+              fullWidth
+              id="name"
+              label="Nama"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              size="small"
+              onChange={(e) => handleChange("name", e.target.value)}
+            />
             <TextField
               margin="dense"
               required
