@@ -5,6 +5,7 @@ import {
   Button,
   Grid,
   IconButton,
+  Modal,
   TextField,
   Typography,
 } from "@mui/material";
@@ -17,7 +18,8 @@ import { Refresh } from "@mui/icons-material";
 const familyDataService = new FamilyDataService();
 
 interface RegisterProps {
-  onShow: (open: boolean) => void;
+  setShow: (open: boolean) => void;
+  onShow: boolean;
 }
 
 interface FormSubmit {
@@ -63,7 +65,7 @@ export const Register = ({ ...props }: RegisterProps) => {
     }));
   };
 
-  const hideRegister = useCallback(() => props.onShow(false), [props]);
+  const hideRegister = useCallback(() => props.setShow(false), [props]);
 
   const signUpWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -80,7 +82,7 @@ export const Register = ({ ...props }: RegisterProps) => {
           });
           setTimeout(async () => {
             await supabase.auth.signOut();
-            props.onShow(false);
+            props.setShow(false);
           }, 2500);
         })
         .catch((e: Error) => {
@@ -179,112 +181,103 @@ export const Register = ({ ...props }: RegisterProps) => {
 
   return (
     <>
-      <Box
-        component="form"
-        onSubmit={signUpWithEmail}
-        noValidate
-        sx={{
-          width: "100%",
-          "@media (min-width: 780px)": {
-            width: "30%",
-          },
-          backgroundColor: "white",
-          padding: 5,
-        }}
+      <Modal
+        open={props.onShow}
+        onClose={() => props.setShow(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <IconButton
-          aria-label="close"
-          color="inherit"
-          size="small"
+        <Box
           sx={{
-            float: "right",
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
-          onClick={hideRegister}
         >
-          <CloseIcon fontSize="inherit" />
-        </IconButton>
-        {alert && (
-          <Alert
-            variant="filled"
-            severity={alert.type}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setAlert(undefined);
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ width: "100%", marginBottom: "10px" }}
+          <Box
+            component="form"
+            onSubmit={signUpWithEmail}
+            noValidate
+            sx={{
+              width: "100%",
+              "@media (min-width: 780px)": {
+                width: "30%",
+              },
+              backgroundColor: "white",
+              padding: 5,
+            }}
           >
-            {alert.message}
-          </Alert>
-        )}
-        <Typography component="h1" variant="h5">
-          Daftar
-        </Typography>
-        <TextField
-          margin="dense"
-          required
-          fullWidth
-          id="email"
-          label="Email"
-          name="email"
-          autoComplete="email"
-          autoFocus
-          size="small"
-          onChange={(e) => handleChange("email", e.target.value)}
-        />
-        <TextField
-          margin="dense"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          size="small"
-          autoComplete="current-password"
-          onChange={(e) => handleChange("password", e.target.value)}
-        />
-        <Autocomplete
-          fullWidth
-          disablePortal
-          id="father"
-          options={listFather}
-          size="small"
-          sx={{ marginTop: 1 }}
-          onChange={(e, v) => {
-            handleChange("motherId", undefined);
-            setListMother([]);
-            handleChange("fatherId", v?.id);
-          }}
-          isOptionEqualToValue={(option, value) => option.label === value.label}
-          renderOption={(props, option) => {
-            return (
-              <li {...props} key={option.id}>
-                {option.label}
-              </li>
-            );
-          }}
-          renderInput={(params) => <TextField {...params} label="Nama Ayah" />}
-        />
-        <Grid container spacing={0}>
-          <Grid item xs={10}>
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              sx={{
+                float: "right",
+              }}
+              onClick={hideRegister}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+            {alert && (
+              <Alert
+                variant="filled"
+                severity={alert.type}
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      setAlert(undefined);
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ width: "100%", marginBottom: "10px" }}
+              >
+                {alert.message}
+              </Alert>
+            )}
+            <Typography component="h1" variant="h5">
+              Daftar
+            </Typography>
+            <TextField
+              margin="dense"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              size="small"
+              onChange={(e) => handleChange("email", e.target.value)}
+            />
+            <TextField
+              margin="dense"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              size="small"
+              autoComplete="current-password"
+              onChange={(e) => handleChange("password", e.target.value)}
+            />
             <Autocomplete
-              disabled={listMother.length === 0}
               fullWidth
               disablePortal
-              id="mother"
-              options={listMother}
+              id="father"
+              options={listFather}
               size="small"
               sx={{ marginTop: 1 }}
               onChange={(e, v) => {
-                handleChange("motherId", v?.parentId);
+                handleChange("motherId", undefined);
+                setListMother([]);
+                handleChange("fatherId", v?.id);
               }}
               isOptionEqualToValue={(option, value) =>
                 option.label === value.label
@@ -297,25 +290,54 @@ export const Register = ({ ...props }: RegisterProps) => {
                 );
               }}
               renderInput={(params) => (
-                <TextField {...params} label="Nama Ibu " />
+                <TextField {...params} label="Nama Ayah" />
               )}
             />
-          </Grid>
-          <Grid item xs={2} sx={{ padding: 1 }}>
-            <IconButton onClick={refreshData}>
-              {onLoad ? <CircularProgress size="sm" /> : <Refresh />}
-            </IconButton>
-          </Grid>
-        </Grid>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {onProgress ? <CircularProgress size="sm" /> : "DAFTAR"}
-        </Button>
-      </Box>
+            <Grid container spacing={0}>
+              <Grid item xs={10}>
+                <Autocomplete
+                  disabled={listMother.length === 0}
+                  fullWidth
+                  disablePortal
+                  id="mother"
+                  options={listMother}
+                  size="small"
+                  sx={{ marginTop: 1 }}
+                  onChange={(e, v) => {
+                    handleChange("motherId", v?.parentId);
+                  }}
+                  isOptionEqualToValue={(option, value) =>
+                    option.label === value.label
+                  }
+                  renderOption={(props, option) => {
+                    return (
+                      <li {...props} key={option.id}>
+                        {option.label}
+                      </li>
+                    );
+                  }}
+                  renderInput={(params) => (
+                    <TextField {...params} label="Nama Ibu " />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={2} sx={{ padding: 1 }}>
+                <IconButton onClick={refreshData}>
+                  {onLoad ? <CircularProgress size="sm" /> : <Refresh />}
+                </IconButton>
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {onProgress ? <CircularProgress size="sm" /> : "DAFTAR"}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 };
