@@ -1,4 +1,4 @@
-import FamilyData, { AuthType, Node, ParentDataType, RegisterType, RelationType, statusTemporaryFamily } from "../types/family.type"
+import FamilyData, { AuthType, Node, ParentDataType, RegisterType, RelationType, StatusVerifyUser, statusTemporaryFamily } from "../types/family.type"
 import { createClient } from "@supabase/supabase-js";
 import { Gender } from "relatives-tree/lib/types";
 import { v4 as uuidv4 } from "uuid";
@@ -110,7 +110,7 @@ class FamilyDataService {
     }
   }
 
-  async userSignUp({ email, password, fatherId, motherId }: RegisterType) {
+  async userSignUp({ email, password, name, fatherId, motherId }: RegisterType) {
     const { data: dataAuth, error: authError } = await supabase.auth.signUp({ email, password })
     if (authError) {
       throw authError
@@ -119,10 +119,10 @@ class FamilyDataService {
       const { data: dataProfile, error: insertError } = await supabase.from('profile').insert({
         id: userId,
         role_id: 2,
-        name: "",
+        name,
         father_id: fatherId,
         mother_id: motherId,
-        is_verify: false
+        is_verify: StatusVerifyUser.pending
       })
       if (insertError) {
         throw insertError
@@ -147,6 +147,54 @@ class FamilyDataService {
 
   async getAllListRequestFamily() {
     const { data, error } = await supabase.from(tableNameTemporary).select('*');
+
+    if (error) {
+      throw error
+    } else if (data) {
+      return data
+    }
+  }
+
+  async getListRequestUsers() {
+    const { data, error } = await supabase.from('profile').select('*').neq('role_id', 1)
+
+    if (error) {
+      throw error
+    } else if (data) {
+      const result = await Promise.all(
+        data.map(async (res) => {
+          const getFatherData = await this.getById(res.father_id)
+          const getMotherData = await this.getById(res.mother_id)
+          return {
+            id: res.id,
+            name: res.name,
+            fatherName: getFatherData.name,
+            motherName: getMotherData.name,
+            status: res.is_verify,
+            createdAt: res.created_at
+          }
+        })
+      )
+      return result
+    }
+  }
+
+  async approvedUser(id: string) {
+    const { data, error } = await supabase.from('profile')
+      .update({ is_verify: StatusVerifyUser.approve })
+      .eq('id', id)
+
+    if (error) {
+      throw error
+    } else if (data) {
+      return data
+    }
+  }
+
+  async rejectedUser(id: string) {
+    const { data, error } = await supabase.from('profile')
+      .update({ is_verify: StatusVerifyUser.rejected })
+      .eq('id', id)
 
     if (error) {
       throw error

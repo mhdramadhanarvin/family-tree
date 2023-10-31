@@ -36,6 +36,7 @@ export interface AuthType {
 }
 
 export interface RegisterType extends AuthType {
+  name: string;
   fatherId: string;
   motherId: string;
 }
@@ -56,6 +57,12 @@ export enum RelationType {
 }
 
 export enum statusTemporaryFamily {
+  pending = 1,
+  approve = 2,
+  rejected = 3
+}
+
+export enum StatusVerifyUser {
   pending = 1,
   approve = 2,
   rejected = 3
