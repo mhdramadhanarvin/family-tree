@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   IconButton,
+  Modal,
   TextField,
   Typography,
 } from "@mui/material";
@@ -15,7 +16,8 @@ import { CircularProgress } from "@mui/joy";
 const familyDataService = new FamilyDataService();
 
 interface LoginProps {
-  onShow: (open: boolean) => void;
+  setShow: (open: boolean) => void;
+  onShow: boolean;
 }
 
 interface FormSubmit {
@@ -43,7 +45,7 @@ export const Login = ({ ...props }: LoginProps) => {
     }));
   };
 
-  const hideLogin = useCallback(() => props.onShow(false), [props]);
+  const hideLogin = useCallback(() => props.setShow(false), [props]);
 
   const signInWithEmail = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,7 +68,7 @@ export const Login = ({ ...props }: LoginProps) => {
             type: "success",
           });
           setTimeout(() => {
-            props.onShow(false);
+            props.setShow(false);
           }, 1500);
         } else {
           await supabase.auth.signOut();
@@ -88,89 +90,105 @@ export const Login = ({ ...props }: LoginProps) => {
 
   return (
     <>
-      <Box
-        component="form"
-        onSubmit={signInWithEmail}
-        noValidate
-        sx={{
-          width: "100%",
-          "@media (min-width: 780px)": {
-            width: "30%",
-          },
-          backgroundColor: "white",
-          padding: 5,
-        }}
+      <Modal
+        open={props.onShow}
+        onClose={() => props.setShow(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <IconButton
-          aria-label="close"
-          color="inherit"
-          size="small"
+        <Box
           sx={{
-            float: "right",
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
-          onClick={hideLogin}
         >
-          <CloseIcon fontSize="inherit" />
-        </IconButton>
-        {alert && (
-          <Alert
-            variant="filled"
-            severity={alert.type}
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={() => {
-                  setAlert(undefined);
-                }}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ width: "100%", marginBottom: "10px" }}
+          <Box
+            component="form"
+            onSubmit={signInWithEmail}
+            noValidate
+            sx={{
+              width: "100%",
+              "@media (min-width: 780px)": {
+                width: "30%",
+              },
+              backgroundColor: "white",
+              padding: 5,
+            }}
           >
-            {alert.message}
-          </Alert>
-        )}
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          id="email"
-          label="Email"
-          name="email"
-          autoComplete="email"
-          autoFocus
-          onChange={(e) => handleChange("email", e.target.value)}
-        />
-        <TextField
-          margin="normal"
-          required
-          fullWidth
-          name="password"
-          label="Password"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          onChange={(e) => handleChange("password", e.target.value)}
-        />
-        {/* <FormControlLabel
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              size="small"
+              sx={{
+                float: "right",
+              }}
+              onClick={hideLogin}
+            >
+              <CloseIcon fontSize="inherit" />
+            </IconButton>
+            {alert && (
+              <Alert
+                variant="filled"
+                severity={alert.type}
+                action={
+                  <IconButton
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      setAlert(undefined);
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ width: "100%", marginBottom: "10px" }}
+              >
+                {alert.message}
+              </Alert>
+            )}
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              onChange={(e) => handleChange("email", e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              onChange={(e) => handleChange("password", e.target.value)}
+            />
+            {/* <FormControlLabel
           control={<Checkbox value="remember" color="primary" />}
           label="Remember me"
         /> */}
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          {onProgress ? <CircularProgress size="sm" /> : "Sign In"}
-        </Button>
-      </Box>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {onProgress ? <CircularProgress size="sm" /> : "Sign In"}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 };

@@ -15,14 +15,14 @@ import { Alert, Snackbar } from "@mui/material";
 import CircularProgress from "@mui/joy/CircularProgress";
 import { RelType } from "relatives-tree/lib/types";
 import Checkbox from "@mui/material/Checkbox";
-import { AlertType, RelationType } from "../../types/family.type";
+import { AlertType } from "../../types/family.type";
 
 const familyDataService = new FamilyDataService();
 
 interface AddFamilyProps {
   onAdd: string | undefined;
   onShow: (open: boolean) => void;
-  userRole: number | undefined;
+  onRefresh: (setRefresh: boolean) => void;
 }
 
 interface FormSubmit {
@@ -171,38 +171,22 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       })
     );
 
-    // // Add data in children and parents updated
-    if (props.userRole === 1) {
-      familyDataService
-        .update(getAllData)
-        .then((data) => {
-          setAlert({
-            message: "Berhasil menambahkan keluarga!",
-            type: "success",
-          });
-        })
-        .catch((e: Error) => {
-          setAlert({
-            message: e.message,
-            type: "error",
-          });
+    // Add data in children and parents updated
+    familyDataService
+      .update(getAllData)
+      .then((data) => {
+        setAlert({
+          message: "Berhasil menambahkan keluarga!",
+          type: "success",
         });
-    } else {
-      const getDataRealParent = await familyDataService.getById(parents[0].id);
-      await familyDataService.storeTemporaryFamilyData(
-        {
-          parentId: getDataRealParent.id,
-          parentName: getDataRealParent.name,
-        },
-        RelationType.children,
-        newData
-      );
-      setAlert({
-        message:
-          "Berhasil mengajukan penambahan keluarga, silahkan menunggu validasi!",
-        type: "success",
+        props.onRefresh(true);
+      })
+      .catch((e: Error) => {
+        setAlert({
+          message: e.message,
+          type: "error",
+        });
       });
-    }
 
     setOnProgress(false);
     setTimeout(() => {
@@ -266,37 +250,22 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     const indexData = await familyDataService.getIndexById(parentId);
     getAllData[indexData] = await getDataParent;
 
-    if (props.userRole === 1) {
-      // simpan semua struktur
-      familyDataService
-        .update(getAllData)
-        .then((data) => { 
-          setAlert({
-            message: "Berhasil menambahkan keluarga!",
-            type: "success",
-          });
-        })
-        .catch((e: Error) => {
-          setAlert({
-            message: e.message,
-            type: "error",
-          });
+    // simpan semua struktur
+    familyDataService
+      .update(getAllData)
+      .then((data) => {
+        setAlert({
+          message: "Berhasil menambahkan keluarga!",
+          type: "success",
         });
-    } else {
-      await familyDataService.storeTemporaryFamilyData(
-        {
-          parentId: getDataParent.id,
-          parentName: getDataParent.name,
-        },
-        RelationType.spouse,
-        newData
-      );
-      setAlert({
-        message:
-          "Berhasil mengajukan penambahan keluarga, silahkan menunggu validasi!",
-        type: "success",
+        props.onRefresh(true);
+      })
+      .catch((e: Error) => {
+        setAlert({
+          message: e.message,
+          type: "error",
+        });
       });
-    }
 
     setOnProgress(false);
     setTimeout(() => {
@@ -325,19 +294,6 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       setOnProgress(false);
       return (statusValidation = false);
     }
-
-    // cek kalau dia laki-laki dan punya pasangan harus tambahkan dari pasangan perempuan
-    // await familyDataService.getById(parent).then((parentData: any) => {
-    //   if (parentData.spouses.length > 1 && relationType === "children") {
-    //     setAlert({
-    //       message: "Silahkan tambahkan keluarga pada jalur pasangan perempuan!",
-    //       type: "error",
-    //     });
-    //     setalert ?? false(true);
-    //     setOnProgress(false);
-    //     return (statusValidation = false);
-    //   }
-    // });
 
     return statusValidation;
   };

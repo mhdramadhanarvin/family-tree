@@ -50,7 +50,11 @@ interface FormSubmit {
   person: Person[];
 }
 
-export const MemberAccess = () => {
+interface MemberAccessProps {
+  onRefresh: (setRefresh: boolean) => void;
+}
+
+export const MemberAccess = ({ ...props }: MemberAccessProps) => {
   const [listFather, setListFather] = useState<ParentData[]>([]);
   const [listMother, setListMother] = useState<ParentData[]>([]);
   const [showForm, setShowForm] = useState<boolean>(false);
@@ -195,7 +199,7 @@ export const MemberAccess = () => {
       getMotherData.children = getMotherData.children.concat(childrenData);
       const indexMother = await familyDataService.getIndexById(mother);
       getAllData[indexMother] = getMotherData;
-      
+
       familyDataService
         .update(getAllData)
         .then(() => {
@@ -204,6 +208,7 @@ export const MemberAccess = () => {
             type: "success",
           });
           setOnProgress(false);
+          props.onRefresh(true);
           setSelectedValues({
             father: "",
             mother: "",
@@ -266,8 +271,8 @@ export const MemberAccess = () => {
         },
       ],
     });
-    setShowForm(false)
-  }
+    setShowForm(false);
+  };
 
   return (
     <>
@@ -281,6 +286,18 @@ export const MemberAccess = () => {
       >
         <Fab color="primary" aria-label="add">
           <AddIcon />
+        </Fab>
+      </Box>
+      <Box
+        onClick={() => props.onRefresh(true)}
+        sx={{
+          position: "absolute",
+          bottom: 80,
+          right: 16,
+        }}
+      >
+        <Fab color="default" aria-label="add">
+          <Refresh />
         </Fab>
       </Box>
       <Modal

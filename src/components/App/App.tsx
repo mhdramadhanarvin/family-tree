@@ -57,19 +57,7 @@ export default React.memo(function App() {
       setRootId(temporaryNode[0].id);
       setNodes(temporaryNode);
     } else {
-      familyDataService
-        .getAll()
-        .then((result: Node[]) => {
-          setRootId(result[0].id);
-          setNodes(result);
-        })
-        .catch((e: Error) => {
-          setAlert({
-            title: "Terjadi kesalahan",
-            message: e.message + ". Please refresh..",
-            type: "error",
-          });
-        });
+      fetchData();
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -97,6 +85,22 @@ export default React.memo(function App() {
       subscription.unsubscribe();
     };
   }, [temporaryNode]);
+
+  const fetchData = () => {
+    familyDataService
+      .getAll()
+      .then((result: Node[]) => {
+        setRootId(result[0].id);
+        setNodes(result);
+      })
+      .catch((e: Error) => {
+        setAlert({
+          title: "Terjadi kesalahan",
+          message: e.message + ". Please refresh..",
+          type: "error",
+        });
+      });
+  };
 
   const resetRootHandler = useCallback(
     () => setRootId(firstNodeId),
@@ -226,48 +230,16 @@ export default React.memo(function App() {
             <AddFamily
               onAdd={addFamilyId}
               onShow={setAddFamily}
-              userRole={userRole}
+              onRefresh={fetchData}
             />
           )}
 
-          <Modal
-            open={showLogin}
-            onClose={() => setShowLogin(false)}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box
-              sx={{
-                marginTop: 8,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Login onShow={setShowLogin} />
-            </Box>
-          </Modal>
-          <Modal
-            open={showRegister}
-            onClose={() => setShowRegister(false)}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box
-              sx={{
-                marginTop: 8,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Register onShow={setShowRegister} />
-            </Box>
-          </Modal>
+          <Login onShow={showLogin} setShow={setShowLogin} />
+          <Register onShow={showRegister} setShow={setShowRegister} />
           {/* {userRole === 1 && session && (
             <SuperAdminAccess detailNode={setTemporaryNode} />
           )} */}
-          {session && <MemberAccess />}
+          {session && <MemberAccess onRefresh={fetchData} />}
         </div>
       )}
     </>

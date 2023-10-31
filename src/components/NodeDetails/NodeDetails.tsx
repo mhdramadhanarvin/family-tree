@@ -77,7 +77,7 @@ export const NodeDetails = memo(function NodeDetails({
       />
       {props.onLogin && (
         <Button variant="contained" size="small" onClick={addFamilyHandler}>
-          {props.userRole === 1 ? "TAMBAH KELUARGA" : "AJUKAN TAMBAH KELUARGA"}
+          TAMBAH KELUARGA
         </Button>
       )}
     </section>

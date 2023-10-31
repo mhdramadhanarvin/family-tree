@@ -20,6 +20,9 @@ create table
     id uuid not null,
     name text null,
     role_id integer null,
+    father_id text not null default ''::text,
+    mother_id character varying not null default ''::character varying,
+    is_verify boolean not null default false,
     constraint profile_pkey primary key (id),
     constraint profile_id_fkey foreign key (id) references users (id) on delete cascade,
     constraint profile_role_id_fkey foreign key (role_id) references roles (id) on delete cascade
