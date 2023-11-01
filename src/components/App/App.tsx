@@ -175,7 +175,7 @@ export default React.memo(function App() {
               </span>
             )}
           </header>
-          {/* <SearchData /> */}
+          {/* <SearchData onResult={setTemporaryNode} /> */}
           {nodes !== null && nodes.length > 0 && (
             <PinchZoomPan
               min={0.2}

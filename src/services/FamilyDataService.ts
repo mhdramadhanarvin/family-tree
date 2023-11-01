@@ -203,6 +203,24 @@ class FamilyDataService {
     }
   }
 
+  async getSearchOneline(searchId: string) {
+    const data = await this.getById(searchId)
+
+    let result: any = [];
+
+    result.push({
+      id: data.id,
+      name: data.name,
+      parents: data.parents
+    });
+
+    for (const parent of data.parents) {
+      const parentData = await this.getSearchOneline(parent.id);
+      result.push(...parentData);
+    }
+    return result
+  }
+
   // TEMPORARY FAMILY / REQUEST FAMILY
   async storeTemporaryFamilyData(parentData: ParentDataType, relation_type: RelationType, familyData: FamilyData) {
     const { data, error } = await supabase.from(tableNameTemporary).insert({

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import FamilyDataService from "../../services/FamilyDataService";
 import { useEffect, useState } from "react";
-import { AlertType } from "../../types/family.type";
+import FamilyData, { AlertType } from "../../types/family.type";
 import { CircularProgress } from "@mui/joy";
 
 const familyDataService = new FamilyDataService();
@@ -25,7 +25,11 @@ interface SourceDataMap {
   name: string;
 }
 
-export const SearchData = () => {
+interface SearchDataProps {
+  onResult: (data: any | undefined) => void;
+}
+
+export const SearchData = ({ ...props }: SearchDataProps) => {
   const [listData, setListData] = useState<AllData[]>([]);
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [onProgress, setOnProgress] = useState<boolean>(false);
@@ -56,9 +60,20 @@ export const SearchData = () => {
     event.preventDefault();
     setOnProgress(true);
 
-    console.log(search !== undefined);
     if (search !== undefined) {
-      setOnProgress(false);
+      // setOnProgress(false);
+      familyDataService
+        .getSearchOneline(search)
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((e: Error) => {
+          setAlert({
+            message: e.message,
+            type: "error",
+          });
+          setOnProgress(false);
+        });
     } else {
       setAlert({
         message: "Silahkan masukkan nama!",
