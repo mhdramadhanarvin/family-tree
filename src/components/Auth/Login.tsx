@@ -10,7 +10,7 @@ import {
 import React, { useCallback, useState } from "react";
 import FamilyDataService, { supabase } from "../../services/FamilyDataService";
 import CloseIcon from "@mui/icons-material/Close";
-import { Role } from "../../types/family.type";
+import { Role, StatusVerifyUser } from "../../types/family.type";
 import { CircularProgress } from "@mui/joy";
 
 const familyDataService = new FamilyDataService();
@@ -59,7 +59,7 @@ export const Login = ({ ...props }: LoginProps) => {
         );
 
         if (
-          (getStatus.role_id === Role.member && getStatus.is_verify === true) ||
+          (getStatus.role_id === Role.member && getStatus.is_verify === StatusVerifyUser.approve) ||
           getStatus.role_id === Role.administrator
         ) {
           setOnProgress(false);
