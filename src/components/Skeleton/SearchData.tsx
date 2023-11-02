@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import FamilyDataService from "../../services/FamilyDataService";
 import { useEffect, useState } from "react";
-import FamilyData, { AlertType } from "../../types/family.type";
+import { AlertType } from "../../types/family.type";
 import { CircularProgress } from "@mui/joy";
 
 const familyDataService = new FamilyDataService();
@@ -61,11 +61,13 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
     setOnProgress(true);
 
     if (search !== undefined) {
-      // setOnProgress(false);
       familyDataService
         .getSearchOneline(search)
-        .then((data) => {
-          console.log(data);
+        .then(async (data) => {
+          const result = await familyDataService.mappingData(data);
+          console.log(result);
+          props.onResult(result);
+          setOnProgress(false);
         })
         .catch((e: Error) => {
           setAlert({
@@ -81,6 +83,11 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
       });
       setOnProgress(false);
     }
+  };
+
+  const handleChange = (search: string | undefined) => {
+    props.onResult(undefined);
+    setSearch(search);
   };
 
   return (
@@ -138,7 +145,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
               size="small"
               sx={{ marginBottom: 1 }}
               onChange={(e, v) => {
-                setSearch(v?.id);
+                handleChange(v?.id);
               }}
               isOptionEqualToValue={(option, value) =>
                 option.label === value.label

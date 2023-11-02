@@ -22,7 +22,8 @@ create table
     role_id integer null,
     father_id text not null default ''::text,
     mother_id character varying not null default ''::character varying,
-    is_verify boolean not null default false,
+    is_verify smallint not null default '1'::smallint,
+    created_at timestamp with time zone not null default now(),
     constraint profile_pkey primary key (id),
     constraint profile_id_fkey foreign key (id) references users (id) on delete cascade,
     constraint profile_role_id_fkey foreign key (role_id) references roles (id) on delete cascade
@@ -88,6 +89,18 @@ insert into storage.buckets
   (id, name, public)
 values
   ('family', 'family', true);
+
+CREATE POLICY "policy_name"
+ON storage.objects
+FOR SELECT USING (
+  true
+);
+
+CREATE POLICY "policy_name"
+ON storage.objects
+FOR INSERT 
+TO authenticated 
+WITH CHECK (true);
 
 -- 5. Insert Base Data
 insert into public.roles

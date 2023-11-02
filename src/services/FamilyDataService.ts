@@ -203,21 +203,29 @@ class FamilyDataService {
     }
   }
 
-  async getSearchOneline(searchId: string) {
+  async getSearchOneline(searchId: string, childrenData?: null | string) {
     const data = await this.getById(searchId)
 
     let result: any = [];
-
-    result.push({
+    let formatData = {
       id: data.id,
       name: data.name,
-      parents: data.parents
-    });
+      parents: data.parents,
+      gender: data.gender,
+      children: [],
+      spouses: []
+    }
 
+    if (childrenData) {
+      formatData.children = data.children.filter((filter: any) => filter.id === childrenData)
+    }
+
+    result.push(formatData);
     for (const parent of data.parents) {
-      const parentData = await this.getSearchOneline(parent.id);
+      const parentData = await this.getSearchOneline(parent.id, searchId);
       result.push(...parentData);
     }
+
     return result
   }
 

@@ -59,7 +59,8 @@ export const Login = ({ ...props }: LoginProps) => {
         );
 
         if (
-          (getStatus.role_id === Role.member && getStatus.is_verify === StatusVerifyUser.approve) ||
+          (getStatus.role_id === Role.member &&
+            getStatus.is_verify === StatusVerifyUser.approve) ||
           getStatus.role_id === Role.administrator
         ) {
           setOnProgress(false);
@@ -69,6 +70,7 @@ export const Login = ({ ...props }: LoginProps) => {
           });
           setTimeout(() => {
             props.setShow(false);
+            setAlert(undefined);
           }, 1500);
         } else {
           await supabase.auth.signOut();
@@ -77,6 +79,9 @@ export const Login = ({ ...props }: LoginProps) => {
             message: "Akun dalam proses verifikasi admin, silahkan menunggu...",
             type: "error",
           });
+          setTimeout(() => {
+            setAlert(undefined);
+          }, 2000);
         }
       })
       .catch((e: Error) => {
