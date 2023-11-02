@@ -85,6 +85,7 @@ export const Register = ({ ...props }: RegisterProps) => {
           setTimeout(async () => {
             await supabase.auth.signOut();
             props.setShow(false);
+            setAlert(undefined);
           }, 2500);
         })
         .catch((e: Error) => {

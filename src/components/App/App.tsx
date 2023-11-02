@@ -19,7 +19,7 @@ import { Register } from "../Auth/Register";
 import { Maintenance } from "../Skeleton/Maintenance";
 import { MemberAccess } from "../Skeleton/MemberAccess";
 // import { Search } from "@mui/icons-material";
-// import { SearchData } from "../Skeleton/SearchData";
+import { SearchData } from "../Skeleton/SearchData";
 
 const familyDataService = new FamilyDataService();
 
@@ -175,7 +175,7 @@ export default React.memo(function App() {
               </span>
             )}
           </header>
-          {/* <SearchData onResult={setTemporaryNode} /> */}
+          <SearchData onResult={setTemporaryNode} />
           {nodes !== null && nodes.length > 0 && (
             <PinchZoomPan
               min={0.2}
