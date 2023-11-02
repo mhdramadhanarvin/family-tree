@@ -268,9 +268,9 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       });
 
     setOnProgress(false);
-    // setTimeout(() => {
-    //   closeHandler();
-    // }, 2000);
+    setTimeout(() => {
+      closeHandler();
+    }, 2000);
   };
 
   const validateData = async (value: FormSubmit) => {
