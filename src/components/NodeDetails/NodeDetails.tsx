@@ -51,6 +51,12 @@ export const NodeDetails = memo(function NodeDetails({
       )}
       {node.address && <h4 className={css.header}>Alamat : {node.address}</h4>}
       {node.job && <h4 className={css.header}>Pekerjaan : {node.job}</h4>}
+      {node.description && (
+        <>
+          <h4 className={css.header}>Deskripsi : </h4>
+          <p>{node.description}</p>
+        </>
+      )}
       <Relations
         {...props}
         allNode={allNode}

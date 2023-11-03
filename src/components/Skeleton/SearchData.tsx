@@ -125,7 +125,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
         sx={{
           background: "white",
           position: "absolute",
-          zIndex: 99,
+          zIndex: 1,
           top: 50,
           padding: 2,
           width: "96%",

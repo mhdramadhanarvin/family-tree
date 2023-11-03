@@ -280,6 +280,7 @@ export const MemberAccess = ({ ...props }: MemberAccessProps) => {
           position: "absolute",
           bottom: 80,
           right: 16,
+          zIndex: 1
         }}
       >
         <Fab color="primary" aria-label="add">

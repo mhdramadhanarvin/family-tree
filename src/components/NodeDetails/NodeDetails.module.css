@@ -6,6 +6,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   text-transform: uppercase;
+  z-index: 2
 }
 
 .header {
