@@ -18,8 +18,8 @@ import { SuperAdminAccess } from "../Skeleton/SuperAdminAccess";
 import { Register } from "../Auth/Register";
 import { Maintenance } from "../Skeleton/Maintenance";
 import { MemberAccess } from "../Skeleton/MemberAccess";
-// import { Search } from "@mui/icons-material";
 import { SearchData } from "../Skeleton/SearchData";
+import { RefreshData } from "../Skeleton/RefreshData";
 
 const familyDataService = new FamilyDataService();
 
@@ -91,6 +91,7 @@ export default React.memo(function App() {
       .then((result: Node[]) => {
         setRootId(result[0].id);
         setNodes(result);
+        setTemporaryNode(undefined)
       })
       .catch((e: Error) => {
         setAlert({
@@ -178,9 +179,9 @@ export default React.memo(function App() {
           <SearchData onResult={setTemporaryNode} />
           {nodes !== null && nodes.length > 0 && (
             <PinchZoomPan
-              min={0.2}
-              max={2.5}
-              captureWheel
+              min={0.1}
+              max={3.0}
+              captureWheel={temporaryNode ? false : true}
               className={css.wrapper}
             >
               <ReactFamilyTree
@@ -237,6 +238,7 @@ export default React.memo(function App() {
           <Register onShow={showRegister} setShow={setShowRegister} />
           {userRole === 1 && session && <SuperAdminAccess />}
           {session && <MemberAccess onRefresh={fetchData} />}
+          <RefreshData onRefresh={fetchData} />
         </div>
       )}
     </>

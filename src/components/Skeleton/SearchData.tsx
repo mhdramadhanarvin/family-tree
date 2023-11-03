@@ -12,6 +12,7 @@ import FamilyDataService from "../../services/FamilyDataService";
 import { useEffect, useState } from "react";
 import { AlertType } from "../../types/family.type";
 import { CircularProgress } from "@mui/joy";
+import { Refresh } from "@mui/icons-material";
 
 const familyDataService = new FamilyDataService();
 
@@ -33,6 +34,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
   const [listData, setListData] = useState<AllData[]>([]);
   const [search, setSearch] = useState<string | undefined>(undefined);
   const [onProgress, setOnProgress] = useState<boolean>(false);
+  const [onRefresh, setOnRefresh] = useState<boolean>(false);
   const [alert, setAlert] = useState<AlertType | undefined>();
 
   const getAllDataByName = () => {
@@ -46,6 +48,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
           };
         });
         setListData(mapData);
+        setOnRefresh(false)
       })
       .catch((e: Error) => {
         console.log(e);
@@ -64,8 +67,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
       familyDataService
         .getSearchOneline(search)
         .then(async (data) => {
-          const result = await familyDataService.mappingData(data);
-          console.log(result);
+          const result = await familyDataService.mappingData(data); 
           props.onResult(result);
           setOnProgress(false);
         })
@@ -74,7 +76,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
             message: e.message,
             type: "error",
           });
-          setOnProgress(false);
+          setOnProgress(false); 
         });
     } else {
       setAlert({
@@ -88,7 +90,12 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
   const handleChange = (search: string | undefined) => {
     props.onResult(undefined);
     setSearch(search);
-  };
+  }; 
+
+  const handleFetch = () => {
+    setOnRefresh(true)
+    getAllDataByName()
+  }
 
   return (
     <>
@@ -136,7 +143,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
               Cari Data
             </Typography>
           </Grid>
-          <Grid item xs={10}>
+          <Grid item xs={8}>
             <Autocomplete
               fullWidth
               disablePortal
@@ -161,6 +168,11 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
                 <TextField {...params} label="Masukkan nama" />
               )}
             />
+          </Grid>
+          <Grid item xs={2}>
+            <Button variant="outlined" fullWidth onClick={handleFetch}>
+              {onRefresh ? <CircularProgress size="sm" /> : <Refresh/>}              
+            </Button>
           </Grid>
           <Grid item xs={2}>
             <Button variant="contained" type="submit" fullWidth>

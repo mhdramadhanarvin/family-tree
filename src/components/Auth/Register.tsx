@@ -146,8 +146,7 @@ export const Register = ({ ...props }: RegisterProps) => {
           };
         });
         if (!byPassOnload) setOnLoad(false);
-        setListFather(mapData);
-        console.log("GET FATHER");
+        setListFather(mapData); 
       })
       .catch((e: Error) => {
         console.log("Error", e);
@@ -162,8 +161,7 @@ export const Register = ({ ...props }: RegisterProps) => {
         .then((data) => {
           handleChange("motherId", undefined);
           setListMother(data);
-          setOnLoad(false);
-          console.log("GET MOTHER");
+          setOnLoad(false); 
         })
         .catch((e: Error) => {
           console.log(e);
