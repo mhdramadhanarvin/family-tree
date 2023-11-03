@@ -124,8 +124,7 @@ export const MemberAccess = ({ ...props }: MemberAccessProps) => {
         .then((data) => {
           handleChange("mother", undefined);
           setListMother(data);
-          setOnLoad(false);
-          console.log("GET MOTHER");
+          setOnLoad(false); 
         })
         .catch((e: Error) => {
           console.log(e);
@@ -145,8 +144,7 @@ export const MemberAccess = ({ ...props }: MemberAccessProps) => {
           };
         });
         if (!byPassOnload) setOnLoad(false);
-        setListFather(mapData);
-        console.log("GET FATHER");
+        setListFather(mapData); 
       })
       .catch((e: Error) => {
         console.log("Error", e);
@@ -280,26 +278,14 @@ export const MemberAccess = ({ ...props }: MemberAccessProps) => {
         onClick={() => setShowForm(true)}
         sx={{
           position: "absolute",
-          bottom: 16,
+          bottom: 80,
           right: 16,
         }}
       >
         <Fab color="primary" aria-label="add">
           <AddIcon />
         </Fab>
-      </Box>
-      <Box
-        onClick={() => props.onRefresh(true)}
-        sx={{
-          position: "absolute",
-          bottom: 80,
-          right: 16,
-        }}
-      >
-        <Fab color="default" aria-label="add">
-          <Refresh />
-        </Fab>
-      </Box>
+      </Box> 
       <Modal
         open={showForm}
         onClose={closeHandler}
