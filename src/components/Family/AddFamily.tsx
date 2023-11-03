@@ -34,6 +34,7 @@ interface FormSubmit {
   address: string;
   job: string | null;
   photo: any;
+  description: string;
 }
 
 export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
@@ -46,6 +47,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     address: "",
     job: "",
     photo: null,
+    description: "",
   });
   const [alert, setAlert] = useState<AlertType | undefined>();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -82,6 +84,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       job,
       photo,
       relationType,
+      description,
     } = selectedValues;
 
     // validate data
@@ -97,7 +100,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
         // gabungkan id suami dan istri untuk data parent
         const parents: string[] = [parent].concat(spouseOfParentId);
         submitChildrenData(
-          { name, gender, birthday, address, job, photo },
+          { name, gender, birthday, address, job, photo, description },
           parents
         );
       } else if (relationType === "spouse") {
@@ -114,7 +117,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           });
         // gabungkan id semua anak untuk pasangan baru
         submitSpouseData(
-          { name, gender, birthday, address, job, photo },
+          { name, gender, birthday, address, job, photo, description },
           parent,
           childrenOfSpouseId
         );
@@ -124,7 +127,8 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
 
   // function untuk tambah data anak
   const submitChildrenData = async (baseData: any, parentId: string[]) => {
-    const { name, gender, birthday, address, job, photo } = baseData;
+    const { name, gender, birthday, address, job, photo, description } =
+      baseData;
     const parents = parentId.map((data: any) => {
       return {
         id: data,
@@ -147,6 +151,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
       children: [],
       siblings: [],
       spouses: [],
+      description,
     };
 
     const getAllData = await familyDataService.getAll();
@@ -200,7 +205,8 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
     parentId: string,
     childrenId: string[]
   ) => {
-    const { name, gender, birthday, address, job, photo } = baseData;
+    const { name, gender, birthday, address, job, photo, description } =
+      baseData;
 
     // siapkan structuk data anak untuk si pasangan baru
     const children = childrenId.map((data: any) => {
@@ -230,6 +236,7 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
           type: "married",
         },
       ],
+      description,
     };
 
     const getAllData = await familyDataService.getAll();
@@ -299,137 +306,155 @@ export const AddFamily = memo(function AddFamily({ ...props }: AddFamilyProps) {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      className={css.root}
-      noValidate
-      autoComplete="off"
-    >
-      <Stack spacing={2}>
-        {alert && (
-          <Snackbar
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={alert ? true : false}
-            autoHideDuration={6000}
+    <>
+      {alert && (
+        <Snackbar
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          open={alert ? true : false}
+          autoHideDuration={6000}
+          onClose={() => setAlert(undefined)}
+        >
+          <Alert
             onClose={() => setAlert(undefined)}
+            severity={alert.type}
+            variant="filled"
+            sx={{ width: "100%" }}
           >
-            <Alert
-              onClose={() => setAlert(undefined)}
-              severity={alert.type}
-              variant="filled"
-              sx={{ width: "100%" }}
+            {alert.message}
+          </Alert>
+        </Snackbar>
+      )}
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
+        className={css.root}
+        noValidate
+        autoComplete="off"
+        sx={{
+          zIndex: 3,
+        }}
+      >
+        <Stack spacing={2}>
+          <header className={css.header}>
+            <h2 className={css.title}> Tambah Keluarga </h2>
+            <button className={css.close} onClick={closeHandler}>
+              &#10005;
+            </button>
+          </header>
+          <TextField
+            required
+            id="name"
+            label="Nama"
+            size="small"
+            sx={{ width: "50ch" }}
+            onChange={(e) => handleChange("name", e.target.value)}
+          />
+          <TextField
+            id="address"
+            label="Alamat"
+            size="small"
+            sx={{ width: "50ch" }}
+            onChange={(e) => handleChange("address", e.target.value)}
+          />
+          <TextField
+            id="job"
+            label="Pekerjaan"
+            size="small"
+            sx={{ width: "50ch" }}
+            onChange={(e) => handleChange("job", e.target.value)}
+          />
+          <TextField
+            id="outlined-multiline-flexible"
+            label="Deskripsi"
+            multiline
+            sx={{ width: "50ch" }}
+            maxRows={5}
+            onChange={(e) => handleChange("description", e.target.value)}
+          />
+          <FormControl>
+            <FormLabel id="gender">Jenis Kelamin</FormLabel>
+            <RadioGroup
+              aria-labelledby="gender"
+              name="gender"
+              value={selectedValues.gender}
+              onChange={(e) => handleChange("gender", e.target.value)}
             >
-              {alert.message}
-            </Alert>
-          </Snackbar>
-        )}
-        <header className={css.header}>
-          <h2 className={css.title}> Tambah Keluarga </h2>
-          <button className={css.close} onClick={closeHandler}>
-            &#10005;
-          </button>
-        </header>
-        <TextField
-          required
-          id="name"
-          label="Nama"
-          size="small"
-          sx={{ width: "50ch" }}
-          onChange={(e) => handleChange("name", e.target.value)}
-        />
-        <TextField
-          required
-          id="address"
-          label="Alamat"
-          size="small"
-          sx={{ width: "50ch" }}
-          onChange={(e) => handleChange("address", e.target.value)}
-        />
-        <TextField
-          required
-          id="job"
-          label="Pekerjaan"
-          size="small"
-          sx={{ width: "50ch" }}
-          onChange={(e) => handleChange("job", e.target.value)}
-        />
-        <FormControl>
-          <FormLabel id="gender">Jenis Kelamin</FormLabel>
-          <RadioGroup
-            aria-labelledby="gender"
-            name="gender"
-            value={selectedValues.gender}
-            onChange={(e) => handleChange("gender", e.target.value)}
-          >
-            <FormControlLabel
-              value="male"
-              control={<Radio size="small" />}
-              label="Laki-laki"
-            />
-            <FormControlLabel
-              value="female"
-              control={<Radio size="small" />}
-              label="Perempuan"
-            />
-          </RadioGroup>
-        </FormControl>
-        <FormControl>
-          <FormLabel id="relationType">Hubungan</FormLabel>
-          <RadioGroup
-            aria-labelledby="relationType"
-            name="relationType"
-            value={selectedValues.relationType}
-            onChange={(e) => handleChange("relationType", e.target.value)}
-          >
-            <FormControlLabel
-              value="spouse"
-              control={<Radio size="small" />}
-              label="Suami/Istri"
-            />
-            <FormControlLabel
-              value="children"
-              control={<Radio size="small" />}
-              label="Anak"
-            />
-          </RadioGroup>
-        </FormControl>
-        <input
-          accept="image/*"
-          type="file"
-          id="select-image"
-          style={{ display: "none" }}
-          onChange={(e: React.FormEvent<HTMLInputElement>) => {
-            setSelectedImage((e.target as HTMLInputElement)?.files?.[0]);
-            setToggleImage(true);
-          }}
-        />
-        <label htmlFor="select-image">
-          <Button variant="contained" color="primary" component="span">
-            Upload Foto
+              <FormControlLabel
+                value="male"
+                control={<Radio size="small" />}
+                label="Laki-laki"
+              />
+              <FormControlLabel
+                value="female"
+                control={<Radio size="small" />}
+                label="Perempuan"
+              />
+            </RadioGroup>
+          </FormControl>
+          <FormControl>
+            <FormLabel id="relationType">Hubungan</FormLabel>
+            <RadioGroup
+              aria-labelledby="relationType"
+              name="relationType"
+              value={selectedValues.relationType}
+              onChange={(e) => handleChange("relationType", e.target.value)}
+            >
+              <FormControlLabel
+                value="spouse"
+                control={<Radio size="small" />}
+                label="Suami/Istri"
+              />
+              <FormControlLabel
+                value="children"
+                control={<Radio size="small" />}
+                label="Anak"
+              />
+            </RadioGroup>
+          </FormControl>
+          <input
+            accept="image/*"
+            type="file"
+            id="select-image"
+            style={{ display: "none" }}
+            onChange={(e: React.FormEvent<HTMLInputElement>) => {
+              setSelectedImage((e.target as HTMLInputElement)?.files?.[0]);
+              setToggleImage(true);
+            }}
+          />
+          <label htmlFor="select-image">
+            <Button variant="contained" color="primary" component="span">
+              Upload Foto
+            </Button>
+          </label>
+          {/* {toggleImage ? "Sembunyikan" : "Tampilkan"} Gambar */}
+          <FormControlLabel
+            value="end"
+            control={
+              <Checkbox
+                checked={toggleImage}
+                onChange={(e) => setToggleImage(e.target.checked)}
+                sx={{
+                  width: 10,
+                }}
+              />
+            }
+            label={toggleImage ? "Sembunyikan Gambar" : "Tampilkan Gambar"}
+            labelPlacement="end"
+          />
+          {imageUrl && toggleImage && (
+            <Box mt={2} textAlign="left">
+              <div>Image Preview:</div>
+              <img src={imageUrl} alt={imageUrl} height="300px" />
+            </Box>
+          )}
+          <Button type="submit" variant="contained" color="primary">
+            {onProgress ? <CircularProgress size="sm" /> : "SIMPAN"}
           </Button>
-        </label>
-        <Checkbox
-          checked={toggleImage}
-          onChange={(e) => setToggleImage(e.target.checked)}
-          sx={{
-            width: 10,
-          }}
-        />
-        {toggleImage ? "Sembunyikan" : "Tampilkan"} Gambar
-        {imageUrl && toggleImage && (
-          <Box mt={2} textAlign="left">
-            <div>Image Preview:</div>
-            <img src={imageUrl} alt={imageUrl} height="300px" />
-          </Box>
-        )}
-        <Button type="submit" variant="contained" color="primary">
-          {onProgress ? <CircularProgress size="sm" /> : "SIMPAN"}
-        </Button>
-      </Stack>
-    </Box>
+        </Stack>
+      </Box>
+    </>
   );
 });

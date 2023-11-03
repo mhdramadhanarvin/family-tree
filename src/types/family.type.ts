@@ -13,6 +13,7 @@ export default interface FamilyData {
   address?: string;
   job?: string;
   photo?: string;
+  description?: string;
 }
 
 export interface Node {
@@ -28,6 +29,7 @@ export interface Node {
   address?: string;
   job?: string;
   photo?: string;
+  description?: string;
 }
 
 export interface AuthType {

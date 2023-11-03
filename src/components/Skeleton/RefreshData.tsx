@@ -14,6 +14,7 @@ export const RefreshData = ({ ...props }: RefreshDataProps) => {
           position: "absolute",
           bottom: 16,
           right: 16,
+          zIndex: 1
         }}
       >
         <Fab color="default" aria-label="add">

@@ -60,7 +60,8 @@ class FamilyDataService {
         birthday: "",
         address: "",
         job: "",
-        photo: ""
+        photo: "",
+        description: ""
       };
 
       const mappedData = {
