@@ -181,12 +181,16 @@ export default React.memo(function App() {
               </span>
             )}
           </header>
-          <SearchData onResult={setTemporaryNode} />
+          <SearchData
+            onResult={setTemporaryNode}
+            onResetZoom={temporaryNode ? true : false}
+          />
           {nodes !== null && nodes.length > 0 && (
             <PinchZoomPan
               min={0.1}
               max={3.0}
-              captureWheel={temporaryNode ? false : true}
+              resetZoom={temporaryNode ? false : true}
+              captureWheel 
               className={css.wrapper}
             >
               <ReactFamilyTree
