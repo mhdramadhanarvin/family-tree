@@ -28,6 +28,7 @@ interface SourceDataMap {
 
 interface SearchDataProps {
   onResult: (data: any | undefined) => void;
+  onResetZoom: boolean;
 }
 
 export const SearchData = ({ ...props }: SearchDataProps) => {
@@ -48,7 +49,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
           };
         });
         setListData(mapData);
-        setOnRefresh(false)
+        setOnRefresh(false);
       })
       .catch((e: Error) => {
         console.log(e);
@@ -67,8 +68,9 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
       familyDataService
         .getSearchOneline(search)
         .then(async (data) => {
-          const result = await familyDataService.mappingData(data); 
+          const result = await familyDataService.mappingData(data);
           props.onResult(result);
+          props.onResetZoom = true;
           setOnProgress(false);
         })
         .catch((e: Error) => {
@@ -76,7 +78,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
             message: e.message,
             type: "error",
           });
-          setOnProgress(false); 
+          setOnProgress(false);
         });
     } else {
       setAlert({
@@ -89,13 +91,14 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
 
   const handleChange = (search: string | undefined) => {
     props.onResult(undefined);
+    props.onResetZoom = true;
     setSearch(search);
-  }; 
+  };
 
   const handleFetch = () => {
-    setOnRefresh(true)
-    getAllDataByName()
-  }
+    setOnRefresh(true);
+    getAllDataByName();
+  };
 
   return (
     <>
@@ -171,7 +174,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
           </Grid>
           <Grid item xs={2}>
             <Button variant="outlined" fullWidth onClick={handleFetch}>
-              {onRefresh ? <CircularProgress size="sm" /> : <Refresh/>}              
+              {onRefresh ? <CircularProgress size="sm" /> : <Refresh />}
             </Button>
           </Grid>
           <Grid item xs={2}>

@@ -10,6 +10,7 @@ interface PinchZoomPanProps {
   className?: string;
   style?: React.CSSProperties;
   children: React.ReactNode;
+  resetZoom?: boolean;
 }
 
 export const PinchZoomPan = React.memo(function PinchZoomPan({
@@ -19,6 +20,7 @@ export const PinchZoomPan = React.memo(function PinchZoomPan({
   className,
   style,
   children,
+  resetZoom,
 }: PinchZoomPanProps) {
   const root = useRef<HTMLDivElement>(null);
 
@@ -31,8 +33,9 @@ export const PinchZoomPan = React.memo(function PinchZoomPan({
       maxZoom: max,
       captureWheel,
     });
+    if (resetZoom) canvas.reset();
     return canvas.destroy;
-  }, [min, max, captureWheel]);
+  }, [min, max, captureWheel, resetZoom]);
 
   return (
     <div ref={root} className={classNames(className, css.root)} style={style}>

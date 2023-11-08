@@ -24,7 +24,7 @@ export const SuperAdminAccess = () => {
       <Box>
         <SpeedDial
           ariaLabel="SpeedDial controlled open example"
-          sx={{ position: "absolute", bottom: 16, right: 75 }}
+          sx={{ position: "absolute", bottom: 16, right: 75, zIndex: 1 }}
           icon={<AdminPanelSettings />}
           onClose={handleClose}
           onOpen={handleOpen}
