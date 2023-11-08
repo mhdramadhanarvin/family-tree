@@ -130,7 +130,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
           position: "absolute",
           zIndex: 1,
           top: 50,
-          padding: 2,
+          padding: 1,
           width: "96%",
           "@media (min-width: 780px)": {
             width: 500,
