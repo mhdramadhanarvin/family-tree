@@ -25,7 +25,7 @@ create table
     is_verify smallint not null default '1'::smallint,
     created_at timestamp with time zone not null default now(),
     constraint profile_pkey primary key (id),
-    constraint profile_id_fkey foreign key (id) references users (id) on delete cascade,
+    constraint profile_id_fkey foreign key (id) references auth.users (id) on delete cascade,
     constraint profile_role_id_fkey foreign key (role_id) references roles (id) on delete cascade
   ) tablespace pg_default;
 
@@ -43,69 +43,73 @@ create table
 
 -- 2. Enable RLS
 alter table family enable row level security;
+
 alter table roles enable row level security;
+
 alter table profile enable row level security;
+
 alter table temporary_family enable row level security;
 
 -- 3. Create Policy
-CREATE POLICY "Enable read access for all users"
-ON public.family
-FOR SELECT USING (true);
-CREATE POLICY "Enable insert for authenticated users only"
-ON public.family
-FOR INSERT 
-TO authenticated 
-WITH CHECK (true);
-CREATE POLICY "Enable update for authenticated users only"
-ON public.family
-FOR UPDATE USING (true) WITH CHECK (true);
+create policy "Enable read access for all users" on public.family for
+select
+  using (true);
 
-CREATE POLICY "Enable read access for all users"
-ON public.profile
-FOR SELECT USING (true);
-CREATE POLICY "Enable insert for authenticated users only"
-ON public.profile
-FOR INSERT 
-TO authenticated 
-WITH CHECK (true);
-CREATE POLICY "Enable update for authenticated users only"
-ON public.profile
-FOR UPDATE USING (true) WITH CHECK (true);
+create policy "Enable insert for authenticated users only" on public.family for insert to authenticated
+with
+  check (true);
 
-CREATE POLICY "Enable read access for all users"
-ON public.temporary_family
-FOR SELECT USING (true);
-CREATE POLICY "Enable insert for authenticated users only"
-ON public.temporary_family
-FOR INSERT 
-TO authenticated 
-WITH CHECK (true);
-CREATE POLICY "Enable update for authenticated users only"
-ON public.temporary_family
-FOR UPDATE USING (true) WITH CHECK (true);
+create policy "Enable update for authenticated users only" on public.family
+for update
+  using (true)
+with
+  check (true);
+
+create policy "Enable read access for all users" on public.profile for
+select
+  using (true);
+
+create policy "Enable insert for authenticated users only" on public.profile for insert to authenticated
+with
+  check (true);
+
+create policy "Enable update for authenticated users only" on public.profile
+for update
+  using (true)
+with
+  check (true);
+
+create policy "Enable read access for all users" on public.temporary_family for
+select
+  using (true);
+
+create policy "Enable insert for authenticated users only" on public.temporary_family for insert to authenticated
+with
+  check (true);
+
+create policy "Enable update for authenticated users only" on public.temporary_family
+for update
+  using (true)
+with
+  check (true);
 
 -- 4. Create Bucket Storage
-insert into storage.buckets
-  (id, name, public)
+insert into
+  storage.buckets (id, name, public)
 values
   ('family', 'family', true);
 
-CREATE POLICY "policy_name"
-ON storage.objects
-FOR SELECT USING (
-  true
-);
+create policy "storaget_policy_public" on storage.objects for
+select
+  using (true);
 
-CREATE POLICY "policy_name"
-ON storage.objects
-FOR INSERT 
-TO authenticated 
-WITH CHECK (true);
+create policy "storage_policy_insert" on storage.objects for insert to authenticated
+with
+  check (true);
 
 -- 5. Insert Base Data
-insert into public.roles
-  (id, role)
+insert into
+  public.roles (id, role)
 values
-  (1, 'superadmin'), 
-  (2, 'member')
-  ;
+  (1, 'superadmin'),
+  (2, 'member');
