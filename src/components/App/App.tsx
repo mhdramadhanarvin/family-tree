@@ -20,6 +20,7 @@ import { Maintenance } from "../Skeleton/Maintenance";
 import { MemberAccess } from "../Skeleton/MemberAccess";
 import { SearchData } from "../Skeleton/SearchData";
 import { RefreshData } from "../Skeleton/RefreshData";
+import { EditFamily } from "../Family/EditFamily";
 
 const familyDataService = new FamilyDataService();
 
@@ -33,6 +34,8 @@ export default React.memo(function App() {
   const [hoverId, setHoverId] = useState<string>();
   const [addFamilyId, setAddFamilyId] = useState<string>();
   const [addFamily, setAddFamily] = useState<boolean>(false);
+  const [editFamilyId, setEditFamilyId] = useState<string>();
+  // const [editFamily, setEditFamily] = useState<boolean>(false);
   const [session, setSession] = useState<Session | null>(null);
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -89,9 +92,10 @@ export default React.memo(function App() {
     familyDataService
       .getAll()
       .then((result: Node[]) => {
+        console.log("FETHED");
         setRootId(result[0].id);
         setNodes(result);
-        setTemporaryNode(undefined)
+        setTemporaryNode(undefined);
       })
       .catch((e: Error) => {
         setAlert({
@@ -115,6 +119,7 @@ export default React.memo(function App() {
   const seeDetailNode = (selectId: string) => {
     setSelectId(selectId);
     setAddFamily(false);
+    setEditFamilyId(undefined);
   };
 
   const signOut = async () => {
@@ -223,6 +228,11 @@ export default React.memo(function App() {
               }}
               onLogin={session}
               userRole={userRole}
+              onRefresh={fetchData}
+              onEdit={() => {
+                setEditFamilyId(selectId);
+                setSelectId(undefined);
+              }}
             />
           )}
 
@@ -230,6 +240,14 @@ export default React.memo(function App() {
             <AddFamily
               onAdd={addFamilyId}
               onShow={setAddFamily}
+              onRefresh={fetchData}
+            />
+          )}
+
+          {editFamilyId !== undefined && (
+            <EditFamily
+              onEdit={editFamilyId}
+              onShow={setEditFamilyId}
               onRefresh={fetchData}
             />
           )}
