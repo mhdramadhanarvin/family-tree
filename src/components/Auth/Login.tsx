@@ -155,7 +155,7 @@ export const Login = ({ ...props }: LoginProps) => {
               </Alert>
             )}
             <Typography component="h1" variant="h5">
-              Sign in
+              Login
             </Typography>
             <TextField
               margin="normal"
@@ -189,7 +189,7 @@ export const Login = ({ ...props }: LoginProps) => {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              {onProgress ? <CircularProgress size="sm" /> : "Sign In"}
+              {onProgress ? <CircularProgress size="sm" /> : "Login"}
             </Button>
           </Box>
         </Box>

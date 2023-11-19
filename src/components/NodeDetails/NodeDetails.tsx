@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { AlertType, Node } from "../../types/family.type";
 import { Session } from "@supabase/supabase-js";
 import { Alert, Box, Snackbar } from "@mui/material";
-import { Add, Create, Delete } from "@mui/icons-material";
+import { Add, Close, Create, Delete } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import FamilyDataService from "../../services/FamilyDataService";
 import { Gender } from "relatives-tree/lib/types";
@@ -128,18 +128,19 @@ export const NodeDetails = memo(function NodeDetails({
         </Snackbar>
       )}
       <section className={classNames(css.root, className)}>
-        <header className={css.header}>
-          {node.photo && (
-            <Box mt={2} textAlign="left">
-              <img src={node.photo} alt={node.photo} height="300px" />
-            </Box>
-          )}
-        </header>
+        {/* <header className={css.header}> */}
+          <button className={css.close} onClick={closeHandler}>
+            {/* &#10005; */}
+            <Close fontSize="medium" />
+          </button>
+        {/* </header> */}
+        {node.photo && (
+          <Box mt={2} textAlign="left">
+            <img src={node.photo} alt={node.photo} height="300px" />
+          </Box>
+        )}
         <header className={css.header}>
           <h3 className={css.title}>{node.name}</h3>
-          <button className={css.close} onClick={closeHandler}>
-            &#10005;
-          </button>
         </header>
         {node.birthday && (
           <h4 className={css.header}>Tanggal Lahir : {node.birthday}</h4>

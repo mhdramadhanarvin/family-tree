@@ -30,8 +30,19 @@ export const Relations = memo(function Relations({
   const clearHandler = useCallback(() => onClear(), [onClear]);
 
   const getNameById = (id: string | undefined): string => {
-    const node = allNode.filter((node: any) => node.id === id)[0]; 
+    const node = allNode.filter((node: any) => node.id === id)[0];
     return node.name;
+  };
+
+  const translateType = (type: string): string => {
+    switch (type) {
+      case "blood":
+        return "kandung";
+      case "married":
+        return "menikah";
+      default:
+        return type;
+    }
   };
 
   if (!items.length) return null;
@@ -47,7 +58,7 @@ export const Relations = memo(function Relations({
           onMouseEnter={hoverHandler(item.id)}
           onMouseLeave={clearHandler}
         >
-          {getNameById(item.id)} - ({item.type})
+          {getNameById(item.id)} - ({translateType(item.type)})
         </div>
       ))}
     </div>

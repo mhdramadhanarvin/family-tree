@@ -143,7 +143,7 @@ export const SearchData = ({ ...props }: SearchDataProps) => {
         <Grid container spacing={1} sx={{}}>
           <Grid item xs={12} sx={{ textAlign: "center" }}>
             <Typography component="h1" variant="h5">
-              Cari Data
+              Cari Silsilah
             </Typography>
           </Grid>
           <Grid item xs={8}>
