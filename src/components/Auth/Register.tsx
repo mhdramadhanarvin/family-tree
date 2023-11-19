@@ -218,7 +218,7 @@ export const Register = ({ ...props }: RegisterProps) => {
               }}
               onClick={hideRegister}
             >
-              <CloseIcon fontSize="inherit" />
+              <CloseIcon fontSize="medium" />
             </IconButton>
             {alert && (
               <Alert

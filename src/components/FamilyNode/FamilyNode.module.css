@@ -23,6 +23,7 @@
   cursor: pointer;
   text-align: center;
   padding: 7px;
+  border-radius: 3px;
 }
 
 .male {

@@ -21,6 +21,7 @@ import { MemberAccess } from "../Skeleton/MemberAccess";
 import { SearchData } from "../Skeleton/SearchData";
 import { RefreshData } from "../Skeleton/RefreshData";
 import { EditFamily } from "../Family/EditFamily";
+import { Button } from "@mui/material";
 
 const familyDataService = new FamilyDataService();
 
@@ -154,31 +155,42 @@ export default React.memo(function App() {
             />
           )}
           <header className={css.header}>
-            <h1 className={css.title}>FamilyTree</h1>
+            <h1 className={css.title}>Zurriat Online</h1>
             {!session && (
               <div
                 style={{
                   display: "inline-flex",
                 }}
               >
-                <span
-                  className={css.version}
+                <Button
+                  variant="contained"
+                  size="small"
                   onClick={() => setShowRegister(true)}
+                  sx={{ marginRight: "5px" }}
                 >
-                  REGISTER
-                </span>
-                <span
-                  className={css.version}
+                  DAFTAR
+                </Button>
+                <Button
+                  variant="contained"
+                  size="small"
                   onClick={() => setShowLogin(true)}
                 >
                   LOGIN
-                </span>
+                </Button>
               </div>
             )}
             {session && (
-              <span className={css.version} onClick={async () => signOut()}>
+              <Button
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={async () => signOut()}
+              >
                 {session.user.email} - LOGOUT
-              </span>
+              </Button>
+              // <span className={css.version} onClick={async () => signOut()}>
+              //   {session.user.email} - LOGOUT
+              // </span>
             )}
           </header>
           <SearchData
@@ -190,7 +202,7 @@ export default React.memo(function App() {
               min={0.1}
               max={3.0}
               resetZoom={temporaryNode ? false : true}
-              captureWheel 
+              captureWheel
               className={css.wrapper}
             >
               <ReactFamilyTree
