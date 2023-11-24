@@ -25,10 +25,8 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FAMILYTREE_1DE04 }}'
           channelId: live
           projectId: familytree-1de04
-      - uses: GenieTim/ftp-action@v4.0.1
+      - uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          host: ${{ secrets.FTP_SERVER }}
-          user: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          localDir: "build"
-          remoteDir: "./"
