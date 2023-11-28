@@ -127,13 +127,10 @@ export const NodeDetails = memo(function NodeDetails({
           </Alert>
         </Snackbar>
       )}
-      <section className={classNames(css.root, className)}>
-        {/* <header className={css.header}> */}
-          <button className={css.close} onClick={closeHandler}>
-            {/* &#10005; */}
-            <Close fontSize="medium" />
-          </button>
-        {/* </header> */}
+      <section className={classNames(css.root, className)}> 
+        <button className={css.close} onClick={closeHandler}> 
+          <Close fontSize="medium" />
+        </button> 
         {node.photo && (
           <Box mt={2} textAlign="left">
             <img src={node.photo} alt={node.photo} height="300px" />

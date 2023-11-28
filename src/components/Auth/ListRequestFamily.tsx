@@ -113,7 +113,7 @@ export const ListRequestUsers = ({ ...props }: ListRequestUsersProps) => {
     {
       field: "status",
       headerName: "Status",
-      width: 100,
+      width: 130,
       renderCell: ({ row }) =>
         row.status === 1 ? (
           <Chip label="PENDING" color="warning" />
@@ -228,20 +228,27 @@ export const ListRequestUsers = ({ ...props }: ListRequestUsersProps) => {
           >
             Daftar Permintaan Penambahan Keluarga
           </Typography>
-          <Button variant="contained" size="small" onClick={fetchData}>
+          <Button
+            variant="contained"
+            size="small"
+            onClick={fetchData}
+            sx={{ marginBottom: "20px" }}
+          >
             <Refresh />
             REFRESH DATA
           </Button>
-          <DataGrid
-            rows={rowData}
-            columns={columns}
-            initialState={{
-              pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
-              },
-            }}
-            pageSizeOptions={[5, 10]}
-          />
+          <Box>
+            <DataGrid
+              rows={rowData}
+              columns={columns}
+              initialState={{
+                pagination: {
+                  paginationModel: { page: 0, pageSize: 5 },
+                },
+              }}
+              pageSizeOptions={[5, 10]}
+            />
+          </Box>
         </Box>
       </Modal>
     </>
