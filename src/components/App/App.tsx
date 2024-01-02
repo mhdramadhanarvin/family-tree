@@ -22,6 +22,7 @@ import { SearchData } from "../Skeleton/SearchData";
 import { RefreshData } from "../Skeleton/RefreshData";
 import { EditFamily } from "../Family/EditFamily";
 import { Button } from "@mui/material";
+import { Footer } from "../Skeleton/Footer";
 
 const familyDataService = new FamilyDataService();
 
@@ -273,6 +274,7 @@ export default React.memo(function App() {
           {userRole === 1 && session && <SuperAdminAccess />}
           {session && <MemberAccess onRefresh={fetchData} />}
           <RefreshData onRefresh={fetchData} />
+          <Footer />
         </div>
       )}
     </>
