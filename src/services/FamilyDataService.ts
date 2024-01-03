@@ -2,6 +2,7 @@ import FamilyData, { AuthType, Node, ParentDataType, RegisterType, RelationType,
 import { createClient } from "@supabase/supabase-js";
 import { Gender } from "relatives-tree/lib/types";
 import { v4 as uuidv4 } from "uuid";
+import moment from 'moment-timezone';
 
 export const supabase = createClient(process.env.REACT_APP_SUPABASE_HOST || "", process.env.REACT_APP_SUPABASE_KEY || "");
 
@@ -23,9 +24,10 @@ class FamilyDataService {
   }
 
   async update(familyData: FamilyData[]) {
+    const date = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     const { data, error } = await supabase
       .from(tableName)
-      .update({ tree: familyData })
+      .update({ tree: familyData, updated_at: date })
       .eq('id', 1)
 
     if (error) {
