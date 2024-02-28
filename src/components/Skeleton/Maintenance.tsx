@@ -12,7 +12,7 @@ export const Maintenance = () => {
       sx={{ minHeight: "100vh" }}
     >
       <Typography sx={{ fontSize: 20, fontWeight: "bold" }} color="text.secondary" gutterBottom>
-        Website Sedang Dalam Perbaikan
+        This website is no longer available until 29 February 2024
       </Typography>
     </Grid>
   );
